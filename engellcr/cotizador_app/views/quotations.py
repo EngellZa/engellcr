@@ -147,8 +147,8 @@ def cotizacion_duplicar(request, pk):
             item.save()
         recalculate_totals(new)
     invalidate_dashboard_cache(request.business.id)
-    messages.success(request, f'Cotización duplicada como {new.quote_number}.')
-    return redirect('cotizador_app:cotizacion_detalle', pk=new.pk)
+    messages.success(request, f'Cotización duplicada como {new.quote_number}. Podés cambiar el cliente y los datos antes de guardar.')
+    return redirect('cotizador_app:cotizacion_editar', pk=new.pk)
 
 
 @business_required
