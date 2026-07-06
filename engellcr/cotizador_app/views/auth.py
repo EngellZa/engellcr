@@ -100,6 +100,9 @@ def verificar_correo(request, token):
         profile.save(update_fields=['email_verified'])
     messages.success(request, '¡Correo verificado! Ya podés usar Cotización Express.')
 
-    if request.user.is_authenticated and request.user.id == user_id:
-        return redirect('cotizador_app:dashboard')
-    return redirect('cotizador_app:login')
+    # The signed token already proves ownership of this account, so log the user in
+    # directly here instead of bouncing them to a manual login (this is what makes the
+    # emailed link work even when opened in a browser/device with no existing session).
+    if not (request.user.is_authenticated and request.user.id == user_id):
+        auth_login(request, profile.user, backend='django.contrib.auth.backends.ModelBackend')
+    return redirect('cotizador_app:dashboard')
