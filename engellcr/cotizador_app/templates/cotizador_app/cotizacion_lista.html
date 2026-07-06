@@ -1,0 +1,40 @@
+{% extends 'cotizador_app/base.html' %}
+{% load cotizador_tags %}
+{% block title %}Cotizaciones{% endblock %}
+{% block page_title %}Cotizaciones{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3 flex-wrap gap-2">
+  <form class="d-flex gap-2">
+    <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm" placeholder="Buscar # o cliente...">
+    <select name="status" class="form-select form-select-sm">
+      <option value="">Todos los estados</option>
+      {% for code, label in estados %}
+        <option value="{{ code }}" {% if code == status %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-sm btn-outline-secondary">Filtrar</button>
+  </form>
+  <a href="{% url 'cotizador_app:cotizacion_crear' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Nueva Cotización</a>
+</div>
+<div class="card">
+  <table class="table mb-0">
+    <thead><tr><th>#</th><th>Cliente</th><th>Fecha</th><th>Estado</th><th class="text-end">Total</th><th></th></tr></thead>
+    <tbody>
+    {% for c in page_obj %}
+      <tr>
+        <td><a href="{% url 'cotizador_app:cotizacion_detalle' c.pk %}">{{ c.quote_number }}</a></td>
+        <td>{{ c.client }}</td>
+        <td>{{ c.issue_date }}</td>
+        <td><span class="badge text-bg-secondary">{{ c.get_status_display }}</span></td>
+        <td class="text-end">{{ c.total|moneda:c.simbolo }}</td>
+        <td class="text-end">
+          <a href="{% url 'cotizador_app:cotizacion_duplicar' c.pk %}" class="btn btn-sm btn-outline-secondary" title="Duplicar"><i class="bi bi-files"></i></a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6" class="text-center text-muted py-4">Aún no tenés cotizaciones.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

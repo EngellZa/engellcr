@@ -1,0 +1,74 @@
+{% extends 'cotizador_app/base.html' %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+{% block content %}
+<form method="post">
+  {% csrf_token %}
+  <div class="card p-4 mb-3">
+    <div class="row g-3">
+      {% for field in form %}
+      <div class="col-md-6">
+        <label class="form-label">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<div class="text-danger small">{{ field.errors|striptags }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card p-4 mb-3">
+    <h6 class="mb-3">Ítems</h6>
+    {{ formset.management_form }}
+    {% if formset.non_form_errors %}<div class="alert alert-danger py-2">{{ formset.non_form_errors|striptags }}</div>{% endif %}
+    <div class="table-responsive">
+      <table class="table table-sm align-middle" id="items-table">
+        <thead>
+          <tr>
+            <th style="min-width:160px;">Producto</th>
+            <th style="min-width:180px;">Descripción</th>
+            <th style="width:90px;">Cant.</th>
+            <th style="width:110px;">Precio</th>
+            <th style="width:90px;">Desc. %</th>
+            <th style="width:90px;">Imp. %</th>
+            <th style="width:40px;"></th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for item_form in formset %}
+          <tr>
+            {% for hidden in item_form.hidden_fields %}{{ hidden }}{% endfor %}
+            <td>{{ item_form.product }}</td>
+            <td>{{ item_form.description }}</td>
+            <td>{{ item_form.quantity }}</td>
+            <td>{{ item_form.unit_price }}</td>
+            <td>{{ item_form.discount_pct }}</td>
+            <td>{{ item_form.tax_pct }}</td>
+            <td>{% if item_form.instance.pk %}{{ item_form.DELETE }}{% endif %}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Guardar Cotización</button>
+  {% if quotation %}<a href="{% url 'cotizador_app:cotizacion_detalle' quotation.pk %}" class="btn btn-outline-secondary">Cancelar</a>{% else %}<a href="{% url 'cotizador_app:cotizacion_lista' %}" class="btn btn-outline-secondary">Cancelar</a>{% endif %}
+</form>
+
+<script>
+// Autocompleta descripción y precio al elegir un producto (los data-* vienen del <option>).
+document.querySelectorAll('.item-product').forEach(function (select) {
+  select.addEventListener('change', function () {
+    var opt = select.options[select.selectedIndex];
+    var row = select.closest('tr');
+    if (!opt || !opt.dataset.price) return;
+    var desc = row.querySelector('input[name$="-description"]');
+    var price = row.querySelector('input[name$="-unit_price"]');
+    var tax = row.querySelector('input[name$="-tax_pct"]');
+    if (desc && !desc.value) desc.value = opt.text;
+    if (price) price.value = opt.dataset.price;
+    if (tax) tax.value = opt.dataset.tax;
+  });
+});
+</script>
+{% endblock %}

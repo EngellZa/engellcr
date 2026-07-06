@@ -1,0 +1,41 @@
+{% extends 'cotizador_app/base.html' %}
+{% load cotizador_tags %}
+{% block title %}Plan y Pagos{% endblock %}
+{% block page_title %}Plan y Pagos{% endblock %}
+{% block content %}
+<div class="d-flex gap-2 mb-3">
+  <a href="{% url 'cotizador_app:plan_mejorar' %}" class="btn btn-primary btn-sm">Mejorar Plan</a>
+  <a href="{% url 'cotizador_app:pagos_lista' %}" class="btn btn-outline-secondary btn-sm">Ver Pagos</a>
+</div>
+<div class="row g-3">
+  <div class="col-md-5">
+    <div class="card p-4">
+      <h6 class="text-muted small">Plan actual</h6>
+      <h4>{{ subscription.plan.name }}</h4>
+      <span class="badge text-bg-secondary mb-2">{{ subscription.get_status_display }}</span>
+      {% if usage %}
+        <p class="mb-1">Uso: <strong>{{ usage.quotations_used }} / {{ usage.quota_limit|default:"∞" }}</strong> cotizaciones</p>
+      {% endif %}
+      {% if subscription.billing_cycle_end %}
+        <p class="text-muted small">Vence: {{ subscription.billing_cycle_end|date:"d/m/Y" }}</p>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-md-7">
+    <div class="card p-4">
+      <h6 class="text-muted small mb-3">Otros planes</h6>
+      <div class="row g-2">
+        {% for plan in planes %}
+        <div class="col-6">
+          <div class="border rounded p-3 h-100">
+            <strong>{{ plan.name }}</strong>
+            <div>{{ plan.price_crc|moneda }}{% if plan.price_crc %}/mes{% endif %}</div>
+            <div class="text-muted small">{% if plan.monthly_quote_limit %}{{ plan.monthly_quote_limit }} cotizaciones/mes{% else %}Cotizaciones ilimitadas{% endif %}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'cotizador_app/base.html' %}
+{% load cotizador_tags %}
+{% block title %}Pagos{% endblock %}
+{% block page_title %}Pagos{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{% url 'cotizador_app:plan_mejorar' %}" class="btn btn-primary btn-sm">Mejorar Plan</a>
+</div>
+<div class="card">
+  <table class="table mb-0">
+    <thead><tr><th>Referencia</th><th>Plan</th><th>Método</th><th>Estado</th><th class="text-end">Monto</th><th>Fecha</th><th></th></tr></thead>
+    <tbody>
+    {% for p in page_obj %}
+      <tr>
+        <td>{{ p.internal_reference }}</td>
+        <td>{{ p.plan.name }}</td>
+        <td>{{ p.get_provider_display }}</td>
+        <td><span class="badge text-bg-secondary">{{ p.get_status_display }}</span></td>
+        <td class="text-end">{{ p.amount|moneda }}</td>
+        <td>{{ p.created_at|date:"d/m/Y" }}</td>
+        <td>
+          {% if p.provider == 'sinpe' and p.status == 'pending' %}
+            <a href="{% url 'cotizador_app:sinpe_subir_comprobante' p.id %}" class="btn btn-sm btn-outline-primary">Subir comprobante</a>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7" class="text-center text-muted py-4">Aún no tenés pagos registrados.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

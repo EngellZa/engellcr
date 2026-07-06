@@ -1,0 +1,26 @@
+{% extends 'cotizador_app/staff_base.html' %}
+{% load cotizador_tags %}
+{% block title %}Cola SINPE{% endblock %}
+{% block page_title %}Comprobantes pendientes de revisión{% endblock %}
+{% block content %}
+<div class="card">
+  <table class="table mb-0">
+    <thead><tr><th>Negocio</th><th>Plan</th><th>Referencia</th><th>Fecha de pago</th><th class="text-end">Monto</th><th>Subido</th><th></th></tr></thead>
+    <tbody>
+    {% for r in recibos %}
+      <tr {% if r.is_expired %}class="table-warning"{% endif %}>
+        <td>{{ r.business.name }}</td>
+        <td>{{ r.payment.plan.name }}</td>
+        <td>{{ r.reference_number }}</td>
+        <td>{{ r.payment_date }}</td>
+        <td class="text-end">{{ r.payment.amount|moneda }}</td>
+        <td>{{ r.created_at|date:"d/m/Y H:i" }}{% if r.is_expired %} <span class="badge text-bg-warning">expirado</span>{% endif %}</td>
+        <td><a href="{% url 'cotizador_app:staff_sinpe_revisar' r.pk %}" class="btn btn-sm btn-primary">Revisar</a></td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7" class="text-center text-muted py-4">No hay comprobantes pendientes 🎉</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

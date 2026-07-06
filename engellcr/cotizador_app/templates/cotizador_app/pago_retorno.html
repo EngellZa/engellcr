@@ -1,0 +1,13 @@
+{% extends 'cotizador_app/base.html' %}
+{% block title %}Procesando pago{% endblock %}
+{% block page_title %}Procesando pago{% endblock %}
+{% block content %}
+<div class="card p-4" style="max-width:520px;">
+  <div class="fs-1 mb-2">⏳</div>
+  <h5>Estamos confirmando tu pago</h5>
+  <p class="text-muted">
+    Tu plan se activará automáticamente en cuanto {{ metodo|title }} confirme el pago. Esto puede tardar unos minutos.
+  </p>
+  <a href="{% url 'cotizador_app:plan_actual' %}" class="btn btn-primary">Ver mi plan</a>
+</div>
+{% endblock %}

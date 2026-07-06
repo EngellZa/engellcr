@@ -1,0 +1,13 @@
+{% extends 'cotizador_app/base.html' %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+{% block content %}
+<div class="card p-4" style="max-width:480px;">
+  <p>¿Estás seguro de que querés continuar con esta acción sobre <strong>{{ objeto }}</strong>?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Confirmar</button>
+    <a href="javascript:history.back()" class="btn btn-outline-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

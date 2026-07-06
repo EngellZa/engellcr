@@ -1,0 +1,41 @@
+{% extends 'cotizador_app/staff_base.html' %}
+{% block title %}Suscripciones{% endblock %}
+{% block page_title %}Suscripciones{% endblock %}
+{% block content %}
+<form class="d-flex gap-2 mb-3">
+  <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm" placeholder="Buscar negocio...">
+  <select name="status" class="form-select form-select-sm">
+    <option value="">Todos</option>
+    {% for code, label in estados %}<option value="{{ code }}" {% if code == status %}selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select>
+  <button class="btn btn-sm btn-outline-secondary">Filtrar</button>
+</form>
+<div class="card">
+  <table class="table mb-0">
+    <thead><tr><th>Negocio</th><th>Plan</th><th>Estado</th><th>Fin ciclo</th><th>Override</th><th></th></tr></thead>
+    <tbody>
+    {% for s in page_obj %}
+      <tr>
+        <td><a href="{% url 'cotizador_app:staff_negocio_detalle' s.business.pk %}">{{ s.business.name }}</a></td>
+        <td>{{ s.plan.name }}</td>
+        <td>{{ s.get_status_display }}</td>
+        <td>{{ s.billing_cycle_end|date:"d/m/Y"|default:"—" }}</td>
+        <td>{{ s.quota_override|default:"—" }}</td>
+        <td>
+          <form method="post" action="{% url 'cotizador_app:staff_suscripcion_editar' s.pk %}" class="d-flex gap-1">
+            {% csrf_token %}
+            <select name="status" class="form-select form-select-sm">
+              {% for code, label in s.STATUS_CHOICES %}<option value="{{ code }}" {% if code == s.status %}selected{% endif %}>{{ label }}</option>{% endfor %}
+            </select>
+            <input type="number" name="quota_override" placeholder="override" value="{{ s.quota_override|default_if_none:'' }}" class="form-control form-control-sm" style="width:90px;">
+            <button class="btn btn-sm btn-outline-primary">OK</button>
+          </form>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6" class="text-center text-muted py-4">Sin resultados.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

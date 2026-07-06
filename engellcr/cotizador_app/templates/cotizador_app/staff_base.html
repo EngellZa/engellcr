@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Panel de Administración{% endblock %} — Cotización Express</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --sidebar-w: 220px; --sidebar-bg: #2b1a3d; --accent: #f39c12; }
+    body { background: #f4f6fa; font-family: 'Segoe UI', sans-serif; }
+    .sidebar { width: var(--sidebar-w); height: 100vh; background: var(--sidebar-bg); position: fixed; top:0; left:0; overflow-y:auto; }
+    .sidebar .brand { color:#fff; font-weight:700; padding: 1rem 1.2rem; border-bottom: 1px solid rgba(255,255,255,.12); }
+    .sidebar .nav-link { color: rgba(255,255,255,.78); padding:.5rem 1.2rem; font-size:.85rem; display:flex; gap:.5rem; align-items:center; border-left:3px solid transparent; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color:#fff; background: rgba(255,255,255,.1); border-left-color: var(--accent); }
+    .main-content { margin-left: var(--sidebar-w); padding: 1.4rem; }
+    .card { border:none; box-shadow: 0 1px 6px rgba(0,0,0,.07); border-radius: 12px; }
+    @media (max-width: 768px) { .sidebar { transform: translateX(-100%); } .main-content { margin-left:0; } }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+<nav class="sidebar">
+  <div class="brand">🛡️ Admin — Cotización Express</div>
+  <a href="{% url 'cotizador_app:staff_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'staff_dashboard' %}active{% endif %}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+  <a href="{% url 'cotizador_app:staff_usuarios' %}" class="nav-link {% if request.resolver_match.url_name == 'staff_usuarios' %}active{% endif %}"><i class="bi bi-people"></i> Usuarios</a>
+  <a href="{% url 'cotizador_app:staff_negocios' %}" class="nav-link {% if 'negocio' in request.resolver_match.url_name %}active{% endif %}"><i class="bi bi-building"></i> Negocios</a>
+  <a href="{% url 'cotizador_app:staff_planes' %}" class="nav-link {% if request.resolver_match.url_name == 'staff_planes' %}active{% endif %}"><i class="bi bi-diagram-3"></i> Planes</a>
+  <a href="{% url 'cotizador_app:staff_suscripciones' %}" class="nav-link {% if 'suscripcion' in request.resolver_match.url_name %}active{% endif %}"><i class="bi bi-arrow-repeat"></i> Suscripciones</a>
+  <a href="{% url 'cotizador_app:staff_pagos' %}" class="nav-link {% if 'pago' in request.resolver_match.url_name %}active{% endif %}"><i class="bi bi-credit-card"></i> Pagos</a>
+  <a href="{% url 'cotizador_app:staff_sinpe_cola' %}" class="nav-link {% if 'sinpe' in request.resolver_match.url_name %}active{% endif %}"><i class="bi bi-phone"></i> Cola SINPE</a>
+  <a href="{% url 'cotizador_app:staff_auditoria' %}" class="nav-link {% if request.resolver_match.url_name == 'staff_auditoria' %}active{% endif %}"><i class="bi bi-journal-text"></i> Auditoría</a>
+  <a href="{% url 'cotizador_app:dashboard' %}" class="nav-link mt-3"><i class="bi bi-box-arrow-left"></i> Volver al panel</a>
+</nav>
+<div class="main-content">
+  <h5 class="mb-3">{% block page_title %}{% endblock %}</h5>
+  {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags|default:'info' }} alert-dismissible fade show py-2">{{ msg }}<button class="btn-close" data-bs-dismiss="alert"></button></div>
+  {% endfor %}
+  {% block content %}{% endblock %}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

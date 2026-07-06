@@ -1,0 +1,27 @@
+{% extends 'cotizador_app/staff_base.html' %}
+{% block title %}Usuarios{% endblock %}
+{% block page_title %}Usuarios{% endblock %}
+{% block content %}
+<form class="d-flex gap-2 mb-3">
+  <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm" placeholder="Buscar por correo, nombre o negocio...">
+  <button class="btn btn-sm btn-outline-secondary">Buscar</button>
+</form>
+<div class="card">
+  <table class="table mb-0">
+    <thead><tr><th>Correo</th><th>Nombre</th><th>Negocio</th><th>Roles</th><th>Verificado</th></tr></thead>
+    <tbody>
+    {% for u in page_obj %}
+      <tr>
+        <td>{{ u.email }}</td>
+        <td>{{ u.first_name }}</td>
+        <td>{% if u.business %}<a href="{% url 'cotizador_app:staff_negocio_detalle' u.business.pk %}">{{ u.business.name }}</a>{% endif %}</td>
+        <td>{% for ur in u.cotizador_roles.all %}<span class="badge text-bg-secondary">{{ ur.role.name }}</span> {% endfor %}</td>
+        <td>{% if u.cotizador_profile.email_verified %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}<i class="bi bi-x-circle text-muted"></i>{% endif %}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5" class="text-center text-muted py-4">Sin resultados.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

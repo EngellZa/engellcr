@@ -1,0 +1,4 @@
+<p>Hola {{ user.first_name|default:user.email }},</p>
+<p>Hacé clic en el siguiente enlace para verificar tu correo y activar tu cuenta:</p>
+<p><a href="{{ verify_url }}">{{ verify_url }}</a></p>
+<p>Este enlace vence en 48 horas.</p>

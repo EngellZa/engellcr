@@ -1,0 +1,52 @@
+{% extends 'cotizador_app/staff_base.html' %}
+{% load cotizador_tags %}
+{% block title %}{{ business.name }}{% endblock %}
+{% block page_title %}{{ business.name }}{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card p-3">
+      <h6 class="text-muted small">Datos del negocio</h6>
+      <p class="mb-1"><strong>Dueño:</strong> {{ business.owner.email }}</p>
+      <p class="mb-1"><strong>Cédula:</strong> {{ business.legal_id|default:"—" }}</p>
+      <p class="mb-1"><strong>Teléfono:</strong> {{ business.phone|default:"—" }}</p>
+      <p class="mb-1"><strong>Cotizaciones:</strong> {{ quotations_count }}</p>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card p-3 mb-3">
+      <h6 class="text-muted small mb-2">Suscripciones (historial)</h6>
+      <table class="table table-sm mb-0">
+        <thead><tr><th>Plan</th><th>Estado</th><th>Inicio ciclo</th><th>Fin ciclo</th><th>Override</th></tr></thead>
+        <tbody>
+        {% for s in subscriptions %}
+          <tr><td>{{ s.plan.name }}</td><td>{{ s.get_status_display }}</td><td>{{ s.billing_cycle_start|date:"d/m/Y"|default:"—" }}</td><td>{{ s.billing_cycle_end|date:"d/m/Y"|default:"—" }}</td><td>{{ s.quota_override|default:"—" }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="card p-3 mb-3">
+      <h6 class="text-muted small mb-2">Pagos</h6>
+      <table class="table table-sm mb-0">
+        <thead><tr><th>Referencia</th><th>Plan</th><th>Método</th><th>Estado</th><th class="text-end">Monto</th></tr></thead>
+        <tbody>
+        {% for p in payments %}
+          <tr><td><a href="{% url 'cotizador_app:staff_pago_detalle' p.pk %}">{{ p.internal_reference }}</a></td><td>{{ p.plan.name }}</td><td>{{ p.get_provider_display }}</td><td>{{ p.get_status_display }}</td><td class="text-end">{{ p.amount|moneda }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="card p-3">
+      <h6 class="text-muted small mb-2">Notas internas</h6>
+      {% for n in notes %}
+        <div class="border-bottom py-1"><small class="text-muted">{{ n.author }} · {{ n.created_at|date:"d/m/Y H:i" }}</small><div>{{ n.text }}</div></div>
+      {% empty %}<p class="text-muted small">Sin notas.</p>{% endfor %}
+      <form method="post" class="mt-2 d-flex gap-2">
+        {% csrf_token %}<input type="hidden" name="action" value="nota">
+        <input type="text" name="text" class="form-control form-control-sm" placeholder="Agregar nota interna...">
+        <button class="btn btn-sm btn-outline-primary">Agregar</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

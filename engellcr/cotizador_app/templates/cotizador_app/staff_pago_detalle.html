@@ -1,0 +1,28 @@
+{% extends 'cotizador_app/staff_base.html' %}
+{% load cotizador_tags %}
+{% block title %}{{ payment.internal_reference }}{% endblock %}
+{% block page_title %}Pago {{ payment.internal_reference }}{% endblock %}
+{% block content %}
+<div class="card p-3 mb-3">
+  <p class="mb-1"><strong>Negocio:</strong> <a href="{% url 'cotizador_app:staff_negocio_detalle' payment.business.pk %}">{{ payment.business.name }}</a></p>
+  <p class="mb-1"><strong>Plan:</strong> {{ payment.plan.name }}</p>
+  <p class="mb-1"><strong>Método:</strong> {{ payment.get_provider_display }}</p>
+  <p class="mb-1"><strong>Estado:</strong> {{ payment.get_status_display }}</p>
+  <p class="mb-1"><strong>Monto:</strong> {{ payment.amount|moneda }}</p>
+  <p class="mb-1"><strong>Referencia externa:</strong> {{ payment.external_reference|default:"—" }}</p>
+  {% if payment.sinpe_receipt %}
+    <p class="mb-0"><a href="{% url 'cotizador_app:staff_sinpe_revisar' payment.sinpe_receipt.pk %}" class="btn btn-sm btn-outline-primary">Ver comprobante SINPE</a></p>
+  {% endif %}
+</div>
+<div class="card p-3">
+  <h6 class="text-muted small mb-2">Eventos de webhook</h6>
+  <table class="table table-sm mb-0">
+    <thead><tr><th>Tipo</th><th>ID externo</th><th>Procesado</th><th>Recibido</th></tr></thead>
+    <tbody>
+    {% for e in events %}
+      <tr><td>{{ e.event_type }}</td><td>{{ e.external_event_id }}</td><td>{{ e.processed }}</td><td>{{ e.received_at|date:"d/m/Y H:i" }}</td></tr>
+    {% empty %}<tr><td colspan="4" class="text-muted text-center py-3">Sin eventos (pago manual o sin webhooks aún).</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

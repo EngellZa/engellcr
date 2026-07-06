@@ -1,0 +1,82 @@
+{% extends 'cotizador_app/base.html' %}
+{% load cotizador_tags %}
+{% block title %}{{ quotation.quote_number }}{% endblock %}
+{% block page_title %}{{ quotation.quote_number }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">
+  <div>
+    <h5 class="mb-0">{{ quotation.client }}</h5>
+    <span class="badge text-bg-secondary">{{ quotation.get_status_display }}</span>
+    <span class="text-muted small ms-2">Válida hasta {{ quotation.valid_until }}</span>
+  </div>
+  <div class="d-flex gap-2 flex-wrap">
+    {% if quotation.is_editable %}
+      <a href="{% url 'cotizador_app:cotizacion_editar' quotation.pk %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i> Editar</a>
+    {% endif %}
+    <a href="{% url 'cotizador_app:cotizacion_duplicar' quotation.pk %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-files"></i> Duplicar</a>
+    <a href="{% url 'cotizador_app:cotizacion_pdf' quotation.pk %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-pdf"></i> PDF</a>
+    {% if quotation.client.email %}
+    <form method="post" action="{% url 'cotizador_app:cotizacion_enviar' quotation.pk %}" class="d-inline">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-outline-secondary btn-sm"><i class="bi bi-envelope"></i> Enviar por correo</button>
+    </form>
+    {% endif %}
+    {% if share_url %}
+    <a href="https://wa.me/?text={{ whatsapp_text|urlencode }}" target="_blank" class="btn btn-success btn-sm"><i class="bi bi-whatsapp"></i> WhatsApp</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card p-4 mb-3">
+  <h6 class="mb-2">Enlace público</h6>
+  {% if share_link and share_link.is_valid %}
+    <div class="input-group mb-2" style="max-width:520px;">
+      <input type="text" class="form-control form-control-sm" readonly value="{{ share_url }}">
+      <button class="btn btn-outline-secondary btn-sm" type="button" onclick="navigator.clipboard.writeText('{{ share_url }}')">Copiar</button>
+    </div>
+    <p class="text-muted small mb-2">Visto {{ share_link.view_count }} vez(es){% if share_link.last_viewed_at %} · última vez {{ share_link.last_viewed_at|date:"d/m/Y H:i" }}{% endif %}</p>
+    <form method="post" action="{% url 'cotizador_app:cotizacion_compartir' quotation.pk %}" class="d-inline">
+      {% csrf_token %}<input type="hidden" name="action" value="revocar">
+      <button type="submit" class="btn btn-outline-danger btn-sm">Revocar enlace</button>
+    </form>
+    <form method="post" action="{% url 'cotizador_app:cotizacion_compartir' quotation.pk %}" class="d-inline">
+      {% csrf_token %}<input type="hidden" name="action" value="rotar">
+      <button type="submit" class="btn btn-outline-secondary btn-sm">Generar nuevo enlace</button>
+    </form>
+  {% else %}
+    {% if share_link %}<p class="text-muted small">El enlace está revocado.</p>{% endif %}
+    <form method="post" action="{% url 'cotizador_app:cotizacion_compartir' quotation.pk %}">
+      {% csrf_token %}<input type="hidden" name="action" value="{% if share_link %}activar{% else %}rotar{% endif %}">
+      <button type="submit" class="btn btn-primary btn-sm">{% if share_link %}Reactivar enlace{% else %}Generar enlace público{% endif %}</button>
+    </form>
+  {% endif %}
+</div>
+
+<div class="card p-4">
+  <table class="table">
+    <thead><tr><th>Descripción</th><th class="text-end">Cant.</th><th class="text-end">Precio</th><th class="text-end">Desc.</th><th class="text-end">Imp.</th><th class="text-end">Total</th></tr></thead>
+    <tbody>
+    {% for item in quotation.items.all %}
+      <tr>
+        <td>{{ item.description }}</td>
+        <td class="text-end">{{ item.quantity }}</td>
+        <td class="text-end">{{ item.unit_price|moneda:quotation.simbolo }}</td>
+        <td class="text-end">{{ item.discount_pct }}%</td>
+        <td class="text-end">{{ item.tax_pct }}%</td>
+        <td class="text-end">{{ item.line_total|moneda:quotation.simbolo }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <div class="d-flex justify-content-end">
+    <table class="table table-sm w-auto">
+      <tr><td class="text-muted">Subtotal</td><td class="text-end">{{ quotation.subtotal|moneda:quotation.simbolo }}</td></tr>
+      <tr><td class="text-muted">Descuento</td><td class="text-end">-{{ quotation.discount_total|moneda:quotation.simbolo }}</td></tr>
+      <tr><td class="text-muted">Impuesto</td><td class="text-end">{{ quotation.tax_total|moneda:quotation.simbolo }}</td></tr>
+      <tr class="fw-bold"><td>Total</td><td class="text-end">{{ quotation.total|moneda:quotation.simbolo }}</td></tr>
+    </table>
+  </div>
+  {% if quotation.notes %}<p class="text-muted small">{{ quotation.notes }}</p>{% endif %}
+  {% if quotation.terms %}<p class="text-muted small"><strong>Términos:</strong> {{ quotation.terms }}</p>{% endif %}
+</div>
+{% endblock %}

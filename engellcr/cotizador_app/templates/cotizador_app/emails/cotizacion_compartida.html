@@ -1,0 +1,5 @@
+<p>Hola {{ quotation.client.name }},</p>
+<p><strong>{{ business.name }}</strong> te envió la cotización <strong>{{ quotation.quote_number }}</strong> por un total de {{ quotation.simbolo }}{{ quotation.total|floatformat:2 }}.</p>
+<p>Podés verla, aprobarla o rechazarla acá:</p>
+<p><a href="{{ share_url }}">{{ share_url }}</a></p>
+<p>Válida hasta {{ quotation.valid_until }}.</p>

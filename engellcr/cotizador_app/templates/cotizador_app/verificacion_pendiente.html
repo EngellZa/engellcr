@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verificá tu correo — Cotización Express CR</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light d-flex align-items-center" style="min-height:100vh;">
+<div class="container text-center" style="max-width:480px;">
+  <div class="card shadow-sm p-4">
+    <div class="fs-1 mb-2">📩</div>
+    <h4 class="fw-bold">Verificá tu correo para continuar</h4>
+    <p class="text-muted">
+      Te enviamos un enlace de verificación a <strong>{{ request.user.email }}</strong>.
+      Hacé clic en el enlace para activar tu cuenta y empezar a usar Cotización Express.
+    </p>
+    {% for msg in messages %}
+      <div class="alert alert-{{ msg.tags|default:'info' }} py-2">{{ msg }}</div>
+    {% endfor %}
+    <form method="post" action="{% url 'cotizador_app:reenviar_verificacion' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary w-100 mb-2">Reenviar correo</button>
+    </form>
+    <form method="post" action="{% url 'cotizador_app:logout' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-outline-secondary w-100">Cerrar sesión</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

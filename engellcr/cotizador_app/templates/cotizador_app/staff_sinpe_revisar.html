@@ -1,0 +1,41 @@
+{% extends 'cotizador_app/staff_base.html' %}
+{% load cotizador_tags %}
+{% block title %}Revisar comprobante{% endblock %}
+{% block page_title %}Revisar comprobante SINPE{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card p-3">
+      <h6 class="text-muted small">Detalle del pago</h6>
+      <p class="mb-1"><strong>Negocio:</strong> {{ receipt.business.name }}</p>
+      <p class="mb-1"><strong>Plan solicitado:</strong> {{ receipt.payment.plan.name }} ({{ receipt.payment.amount|moneda }})</p>
+      <p class="mb-1"><strong>Referencia SINPE:</strong> {{ receipt.reference_number }}</p>
+      <p class="mb-1"><strong>Fecha de pago:</strong> {{ receipt.payment_date }}</p>
+      <p class="mb-1"><strong>Nota del cliente:</strong> {{ receipt.note|default:"—" }}</p>
+      <p class="mb-1"><strong>Estado:</strong> {{ receipt.get_status_display }}{% if receipt.is_expired %} <span class="badge text-bg-warning">expirado</span>{% endif %}</p>
+      <a href="{{ receipt_url }}" target="_blank" class="btn btn-outline-secondary btn-sm mt-2">Ver comprobante (enlace privado)</a>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card p-3">
+      {% if not is_admin %}
+        <div class="alert alert-warning py-2 small mb-3">Tenés acceso de <strong>solo lectura</strong> (rol soporte). Solo un administrador puede aprobar o rechazar.</div>
+      {% endif %}
+      {% if receipt.status == 'pending_review' %}
+      <form method="post" class="mb-3">
+        {% csrf_token %}<input type="hidden" name="action" value="aprobar">
+        <button type="submit" class="btn btn-success w-100" {% if not is_admin %}disabled{% endif %}>✅ Aprobar y activar plan</button>
+      </form>
+      <form method="post">
+        {% csrf_token %}<input type="hidden" name="action" value="rechazar">
+        <label class="form-label small">Motivo de rechazo (obligatorio)</label>
+        <textarea name="reason" class="form-control mb-2" rows="2" {% if not is_admin %}disabled{% endif %}></textarea>
+        <button type="submit" class="btn btn-outline-danger w-100" {% if not is_admin %}disabled{% endif %}>❌ Rechazar</button>
+      </form>
+      {% else %}
+        <p class="text-muted">Este comprobante ya fue {{ receipt.get_status_display|lower }}{% if receipt.rejection_reason %}: {{ receipt.rejection_reason }}{% endif %}.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
