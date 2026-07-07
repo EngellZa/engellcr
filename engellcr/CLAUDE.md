@@ -18,13 +18,27 @@ pip install -r requirements.txt
 cp .env.example .env               # then edit; for local SQLite use DATABASE_URL=sqlite:///db.sqlite3
 
 # Database
-python manage.py migrate
+python manage.py migrate      # data migration 0002_seed_roles_plans creates the 3 roles and 4 plans automatically
 
 # Run
 python manage.py runserver
 ```
 
-There is no automated test suite yet and no lint/format tooling configured — changes are verified by running the dev server and hitting routes directly (see the manual verification checklist in the implementation plan).
+To get a `staff/` panel admin locally: register normally at `/registro/`, verify the email, then assign the `admin` `Role` to that user via `/admin/` → `UserRole` (there is no CLI command for this).
+
+```bash
+# Tests — single file, cotizador_app/tests.py, 24 tests across 10 TestCase classes
+python manage.py test cotizador_app
+python manage.py test cotizador_app.tests.QuotaEnforcementTests            # one class
+python manage.py test cotizador_app.tests.QuotaEnforcementTests.test_x    # one test
+python manage.py test cotizador_app --keepdb                              # skip schema recreation on repeat runs
+```
+
+No lint/format tooling is configured. Beyond the automated tests, UI/flow changes are also verified by running the dev server and hitting routes directly.
+
+Test gotchas:
+- Rate-limiting (`@rate_limit`) is backed by Django's cache, which — unlike the DB — is **not** reset by `TestCase`'s transaction rollback between tests. The suite's shared base `TestCase` (top of `tests.py`) calls `cache.clear()` in `setUp()`; any new test class touching a rate-limited view must inherit from it, not `django.test.TestCase` directly.
+- Django 5.0.6's template-instrumentation is incompatible with Python 3.14+ (`AttributeError: 'super' object has no attribute 'dicts'`) — run tests under Python 3.12, matching production.
 
 **WeasyPrint** (used for PDF generation, see below) needs system libraries. The [Dockerfile](Dockerfile) installs them via apt for Railway/Linux deploys. On Windows, a native (non-MSYS/mingw) Python build is required for `pip install weasyprint`/`psycopg2-binary`/`Pillow` to find prebuilt wheels — an MSYS2 `mingw64` Python will fail to build these from source.
 
@@ -65,6 +79,14 @@ Every tenant-scoped model (`Client`, `Product`, `Quotation`, `Payment`, etc.) ca
 ### File storage
 
 Public files (quotation PDFs, business logos) use the default Cloudinary storage already configured for this project (`django-cloudinary-storage`). SINPE receipts are **private** — uploaded via the raw `cloudinary` SDK with `type='authenticated'` (not the default public storage class), and only ever served through an authenticated Django view that generates a short-lived signed URL — never a stored public URL.
+
+### Help pages (`/panel/ayuda/` and `/staff/ayuda/`) must stay in sync with features
+
+`ayuda.html` (customer-facing, `views/business.py:ayuda`) and `staff_ayuda.html` (admin-facing, `views/staff.py:staff_ayuda`) are plain static accordion pages, not DB-backed — content lives directly in the templates. **Whenever a customer-facing or admin-facing feature is added or changed, update the matching accordion section in these two templates in the same change**, so they never drift out of date.
+
+### Production `DATABASE_URL` gotcha (real incident, watch for regressions)
+
+`config/settings.py` does `dj_database_url.config(default=config('DATABASE_URL', default='sqlite:///db.sqlite3'))` — if Railway's web service is ever missing an env var named **exactly** `DATABASE_URL` (e.g. someone renames/replaces it with `DATABASE_PUBLIC_URL` or similar), the app silently falls back to an ephemeral SQLite file in the container with **no error**, and all data written in that state is lost on the next deploy. This already happened once in production. If anything looks like data is "disappearing" or a freshly-registered account can't be found, check the Railway web service's Variables tab for a variable literally named `DATABASE_URL` before assuming it's a code bug.
 
 ### Full implementation plan
 
