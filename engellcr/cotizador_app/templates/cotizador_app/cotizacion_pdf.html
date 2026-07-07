@@ -1,3 +1,4 @@
+{% load cotizador_tags %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -59,21 +60,21 @@
     {% for item in quotation.items.all %}
       <tr>
         <td>{{ item.description }}</td>
-        <td class="num">{{ item.quantity }}</td>
-        <td class="num">{{ quotation.simbolo }}{{ item.unit_price|floatformat:2 }}</td>
-        <td class="num">{{ item.discount_pct }}%</td>
-        <td class="num">{{ item.tax_pct }}%</td>
-        <td class="num">{{ quotation.simbolo }}{{ item.line_total|floatformat:2 }}</td>
+        <td class="num">{{ item.quantity|numero }}</td>
+        <td class="num">{{ item.unit_price|moneda:quotation.simbolo }}</td>
+        <td class="num">{{ item.discount_pct|numero }}%</td>
+        <td class="num">{{ item.tax_pct|numero }}%</td>
+        <td class="num">{{ item.line_total|moneda:quotation.simbolo }}</td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
 
   <table class="totals">
-    <tr><td>Subtotal</td><td class="num">{{ quotation.simbolo }}{{ quotation.subtotal|floatformat:2 }}</td></tr>
-    <tr><td>Descuento</td><td class="num">-{{ quotation.simbolo }}{{ quotation.discount_total|floatformat:2 }}</td></tr>
-    <tr><td>Impuesto</td><td class="num">{{ quotation.simbolo }}{{ quotation.tax_total|floatformat:2 }}</td></tr>
-    <tr class="total-row"><td>Total</td><td class="num">{{ quotation.simbolo }}{{ quotation.total|floatformat:2 }}</td></tr>
+    <tr><td>Subtotal</td><td class="num">{{ quotation.subtotal|moneda:quotation.simbolo }}</td></tr>
+    <tr><td>Descuento</td><td class="num">-{{ quotation.discount_total|moneda:quotation.simbolo }}</td></tr>
+    <tr><td>Impuesto</td><td class="num">{{ quotation.tax_total|moneda:quotation.simbolo }}</td></tr>
+    <tr class="total-row"><td>Total</td><td class="num">{{ quotation.total|moneda:quotation.simbolo }}</td></tr>
   </table>
 
   {% if quotation.notes %}<div class="notes"><strong>Notas:</strong> {{ quotation.notes }}</div>{% endif %}

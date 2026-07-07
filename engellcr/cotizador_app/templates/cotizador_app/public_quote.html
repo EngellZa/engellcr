@@ -1,3 +1,4 @@
+{% load cotizador_tags %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -37,19 +38,19 @@
       {% for item in quote.items %}
         <tr>
           <td>{{ item.description }}</td>
-          <td class="text-end">{{ item.quantity }}</td>
-          <td class="text-end">{{ quote.simbolo }}{{ item.unit_price|floatformat:2 }}</td>
-          <td class="text-end">{{ quote.simbolo }}{{ item.line_total|floatformat:2 }}</td>
+          <td class="text-end">{{ item.quantity|numero }}</td>
+          <td class="text-end">{{ item.unit_price|moneda:quote.simbolo }}</td>
+          <td class="text-end">{{ item.line_total|moneda:quote.simbolo }}</td>
         </tr>
       {% endfor %}
       </tbody>
     </table>
     <div class="d-flex justify-content-end">
       <table class="table table-sm w-auto">
-        <tr><td class="text-muted">Subtotal</td><td class="text-end">{{ quote.simbolo }}{{ quote.subtotal|floatformat:2 }}</td></tr>
-        <tr><td class="text-muted">Descuento</td><td class="text-end">-{{ quote.simbolo }}{{ quote.discount_total|floatformat:2 }}</td></tr>
-        <tr><td class="text-muted">Impuesto</td><td class="text-end">{{ quote.simbolo }}{{ quote.tax_total|floatformat:2 }}</td></tr>
-        <tr class="fw-bold"><td>Total</td><td class="text-end">{{ quote.simbolo }}{{ quote.total|floatformat:2 }}</td></tr>
+        <tr><td class="text-muted">Subtotal</td><td class="text-end">{{ quote.subtotal|moneda:quote.simbolo }}</td></tr>
+        <tr><td class="text-muted">Descuento</td><td class="text-end">-{{ quote.discount_total|moneda:quote.simbolo }}</td></tr>
+        <tr><td class="text-muted">Impuesto</td><td class="text-end">{{ quote.tax_total|moneda:quote.simbolo }}</td></tr>
+        <tr class="fw-bold"><td>Total</td><td class="text-end">{{ quote.total|moneda:quote.simbolo }}</td></tr>
       </table>
     </div>
     {% if quote.notes %}<p class="text-muted small">{{ quote.notes }}</p>{% endif %}

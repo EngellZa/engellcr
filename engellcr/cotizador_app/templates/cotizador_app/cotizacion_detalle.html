@@ -60,10 +60,10 @@
     {% for item in quotation.items.all %}
       <tr>
         <td>{{ item.description }}</td>
-        <td class="text-end">{{ item.quantity }}</td>
+        <td class="text-end">{{ item.quantity|numero }}</td>
         <td class="text-end">{{ item.unit_price|moneda:quotation.simbolo }}</td>
-        <td class="text-end">{{ item.discount_pct }}%</td>
-        <td class="text-end">{{ item.tax_pct }}%</td>
+        <td class="text-end">{{ item.discount_pct|numero }}%</td>
+        <td class="text-end">{{ item.tax_pct|numero }}%</td>
         <td class="text-end">{{ item.line_total|moneda:quotation.simbolo }}</td>
       </tr>
     {% endfor %}

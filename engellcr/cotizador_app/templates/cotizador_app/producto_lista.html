@@ -18,7 +18,7 @@
       <tr>
         <td>{{ p.name }}</td><td>{{ p.sku }}</td>
         <td class="text-end">{{ p.unit_price|moneda }}</td>
-        <td class="text-end">{{ p.tax_pct }}%</td>
+        <td class="text-end">{{ p.tax_pct|numero }}%</td>
         <td>{% if p.is_active %}<span class="badge text-bg-success">Activo</span>{% else %}<span class="badge text-bg-secondary">Archivado</span>{% endif %}</td>
         <td class="text-end">
           <a href="{% url 'cotizador_app:producto_editar' p.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>

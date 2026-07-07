@@ -1,3 +1,4 @@
+{% load cotizador_tags %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -244,7 +245,7 @@
           {% if plan.code == 'pro' %}<span class="plan-badge">MÁS POPULAR</span>{% endif %}
           <div class="fw-semibold text-uppercase small text-muted mb-1">{{ plan.name }}</div>
           <div class="plan-price mb-1">
-            {% if plan.price_crc %}₡{{ plan.price_crc|floatformat:0 }}{% else %}₡0{% endif %}
+            {% if plan.price_crc %}₡{{ plan.price_crc|numero:0 }}{% else %}₡0{% endif %}
             <span class="fs-6 fw-normal text-muted">{% if plan.price_crc %}/mes{% endif %}</span>
           </div>
           <div class="flex-grow-1 mt-3">
