@@ -12,6 +12,7 @@
   <div class="d-flex gap-2 flex-wrap">
     {% if quotation.is_editable %}
       <a href="{% url 'cotizador_app:cotizacion_editar' quotation.pk %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i> Editar</a>
+      <a href="{% url 'cotizador_app:cotizacion_eliminar' quotation.pk %}" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Eliminar</a>
     {% endif %}
     <a href="{% url 'cotizador_app:cotizacion_duplicar' quotation.pk %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-files"></i> Duplicar</a>
     <a href="{% url 'cotizador_app:cotizacion_pdf' quotation.pk %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-pdf"></i> PDF</a>

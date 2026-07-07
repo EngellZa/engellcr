@@ -28,6 +28,9 @@
         <td><span class="badge text-bg-secondary">{{ c.get_status_display }}</span></td>
         <td class="text-end">{{ c.total|moneda:c.simbolo }}</td>
         <td class="text-end">
+          {% if c.is_editable %}
+          <a href="{% url 'cotizador_app:cotizacion_eliminar' c.pk %}" class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="bi bi-trash"></i></a>
+          {% endif %}
           <a href="{% url 'cotizador_app:cotizacion_duplicar' c.pk %}" class="btn btn-sm btn-outline-secondary" title="Duplicar"><i class="bi bi-files"></i></a>
         </td>
       </tr>

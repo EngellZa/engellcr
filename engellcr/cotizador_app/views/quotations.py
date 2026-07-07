@@ -108,6 +108,23 @@ def cotizacion_editar(request, pk):
 
 
 @business_required
+def cotizacion_eliminar(request, pk):
+    quotation = get_object_or_404(Quotation, pk=pk, business=request.business)
+    if not quotation.is_editable:
+        messages.error(request, 'Solo se pueden eliminar cotizaciones en borrador. Una cotización enviada no se puede borrar.')
+        return redirect('cotizador_app:cotizacion_detalle', pk=pk)
+
+    if request.method == 'POST':
+        quotation.delete()
+        invalidate_dashboard_cache(request.business.id)
+        messages.success(request, 'Cotización eliminada.')
+        return redirect('cotizador_app:cotizacion_lista')
+    return render(request, 'cotizador_app/confirmar_eliminar.html', {
+        'objeto': quotation, 'titulo': f'Eliminar {quotation.quote_number}',
+    })
+
+
+@business_required
 def cotizacion_detalle(request, pk):
     quotation = get_object_or_404(
         Quotation.objects.select_related('client').prefetch_related('items'),

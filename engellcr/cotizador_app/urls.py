@@ -54,6 +54,7 @@ urlpatterns = [
     path('panel/cotizaciones/nueva/', quotations.cotizacion_crear, name='cotizacion_crear'),
     path('panel/cotizaciones/<int:pk>/', quotations.cotizacion_detalle, name='cotizacion_detalle'),
     path('panel/cotizaciones/<int:pk>/editar/', quotations.cotizacion_editar, name='cotizacion_editar'),
+    path('panel/cotizaciones/<int:pk>/eliminar/', quotations.cotizacion_eliminar, name='cotizacion_eliminar'),
     path('panel/cotizaciones/<int:pk>/duplicar/', quotations.cotizacion_duplicar, name='cotizacion_duplicar'),
     path('panel/cotizaciones/<int:pk>/pdf/', quotations.cotizacion_pdf, name='cotizacion_pdf'),
     path('panel/cotizaciones/<int:pk>/enviar/', quotations.cotizacion_enviar, name='cotizacion_enviar'),

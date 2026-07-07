@@ -33,9 +33,9 @@
             <th style="width:40px;"></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="items-tbody">
         {% for item_form in formset %}
-          <tr>
+          <tr class="item-row">
             {% for hidden in item_form.hidden_fields %}{{ hidden }}{% endfor %}
             <td>{{ item_form.product }}</td>
             <td>{{ item_form.description }}</td>
@@ -43,32 +43,91 @@
             <td>{{ item_form.unit_price }}</td>
             <td>{{ item_form.discount_pct }}</td>
             <td>{{ item_form.tax_pct }}</td>
-            <td>{% if item_form.instance.pk %}{{ item_form.DELETE }}{% endif %}</td>
+            <td>
+              {% if item_form.instance.pk %}
+                <label class="text-danger small"><input type="checkbox" name="{{ item_form.prefix }}-DELETE" class="row-delete-existing"> 🗑️</label>
+              {% else %}
+                <button type="button" class="btn btn-sm btn-outline-danger row-remove-new">×</button>
+              {% endif %}
+            </td>
           </tr>
         {% endfor %}
         </tbody>
       </table>
     </div>
+    <button type="button" id="add-item-row" class="btn btn-sm btn-outline-primary mt-2">
+      <i class="bi bi-plus-lg"></i> Agregar ítem
+    </button>
   </div>
 
   <button type="submit" class="btn btn-primary">Guardar Cotización</button>
   {% if quotation %}<a href="{% url 'cotizador_app:cotizacion_detalle' quotation.pk %}" class="btn btn-outline-secondary">Cancelar</a>{% else %}<a href="{% url 'cotizador_app:cotizacion_lista' %}" class="btn btn-outline-secondary">Cancelar</a>{% endif %}
 </form>
 
+<!-- Plantilla oculta para nuevas filas — Django rellena el prefijo con __prefix__ -->
+<template id="empty-item-row">
+  <tr class="item-row">
+    <td>{{ formset.empty_form.product }}</td>
+    <td>{{ formset.empty_form.description }}</td>
+    <td>{{ formset.empty_form.quantity }}</td>
+    <td>{{ formset.empty_form.unit_price }}</td>
+    <td>{{ formset.empty_form.discount_pct }}</td>
+    <td>{{ formset.empty_form.tax_pct }}</td>
+    <td><button type="button" class="btn btn-sm btn-outline-danger row-remove-new">×</button></td>
+  </tr>
+</template>
+
 <script>
-// Autocompleta descripción y precio al elegir un producto (los data-* vienen del <option>).
-document.querySelectorAll('.item-product').forEach(function (select) {
-  select.addEventListener('change', function () {
-    var opt = select.options[select.selectedIndex];
-    var row = select.closest('tr');
-    if (!opt || !opt.dataset.price) return;
-    var desc = row.querySelector('input[name$="-description"]');
-    var price = row.querySelector('input[name$="-unit_price"]');
-    var tax = row.querySelector('input[name$="-tax_pct"]');
-    if (desc && !desc.value) desc.value = opt.text;
-    if (price) price.value = opt.dataset.price;
-    if (tax) tax.value = opt.dataset.tax;
+(function () {
+  var tbody = document.getElementById('items-tbody');
+  var totalForms = document.getElementById('id_items-TOTAL_FORMS');
+
+  function bindProductAutofill(row) {
+    var select = row.querySelector('.item-product');
+    if (!select) return;
+    select.addEventListener('change', function () {
+      var opt = select.options[select.selectedIndex];
+      if (!opt || !opt.dataset.price) return;
+      var desc = row.querySelector('input[name$="-description"]');
+      var price = row.querySelector('input[name$="-unit_price"]');
+      var tax = row.querySelector('input[name$="-tax_pct"]');
+      if (desc && !desc.value) desc.value = opt.text;
+      if (price) price.value = opt.dataset.price;
+      if (tax) tax.value = opt.dataset.tax;
+    });
+  }
+
+  function bindRemove(row) {
+    var btn = row.querySelector('.row-remove-new');
+    if (btn) {
+      btn.addEventListener('click', function () { row.remove(); });
+    }
+    var delCheckbox = row.querySelector('.row-delete-existing');
+    if (delCheckbox) {
+      delCheckbox.addEventListener('change', function () {
+        row.style.opacity = delCheckbox.checked ? '0.4' : '1';
+      });
+    }
+  }
+
+  // Existing rows rendered by the server
+  document.querySelectorAll('#items-tbody .item-row').forEach(function (row) {
+    bindProductAutofill(row);
+    bindRemove(row);
   });
-});
+
+  document.getElementById('add-item-row').addEventListener('click', function () {
+    var index = parseInt(totalForms.value, 10);
+    var template = document.getElementById('empty-item-row').innerHTML;
+    var html = template.replace(/__prefix__/g, index);
+    var wrapper = document.createElement('tbody');
+    wrapper.innerHTML = html.trim();
+    var newRow = wrapper.firstElementChild;
+    tbody.appendChild(newRow);
+    bindProductAutofill(newRow);
+    bindRemove(newRow);
+    totalForms.value = index + 1;
+  });
+})();
 </script>
 {% endblock %}
