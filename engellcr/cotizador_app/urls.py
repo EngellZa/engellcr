@@ -36,6 +36,7 @@ urlpatterns = [
     # Panel
     path('panel/', business.dashboard, name='dashboard'),
     path('panel/perfil-negocio/', business.perfil_negocio, name='perfil_negocio'),
+    path('panel/ayuda/', business.ayuda, name='ayuda'),
 
     # Clientes
     path('panel/clientes/', clients.cliente_lista, name='cliente_lista'),
@@ -84,4 +85,5 @@ urlpatterns = [
     path('staff/sinpe/', staff.staff_sinpe_cola, name='staff_sinpe_cola'),
     path('staff/sinpe/<int:pk>/revisar/', staff.staff_sinpe_revisar, name='staff_sinpe_revisar'),
     path('staff/auditoria/', staff.staff_auditoria, name='staff_auditoria'),
+    path('staff/ayuda/', staff.staff_ayuda, name='staff_ayuda'),
 ]

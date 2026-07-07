@@ -55,6 +55,11 @@ def dashboard(request):
     return render(request, 'cotizador_app/dashboard.html', context)
 
 
+@business_required
+def ayuda(request):
+    return render(request, 'cotizador_app/ayuda.html')
+
+
 def landing(request):
     from ..models import SubscriptionPlan
     plans = cx_get(plan_list_key())

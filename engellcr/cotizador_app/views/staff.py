@@ -200,3 +200,8 @@ def staff_auditoria(request):
     page = paginator.get_page(request.GET.get('page'))
     acciones = AuditLog.objects.values_list('action', flat=True).distinct()
     return render(request, 'cotizador_app/staff_auditoria.html', {'page_obj': page, 'action': action, 'acciones': acciones})
+
+
+@role_required(Role.ADMIN, Role.SUPPORT)
+def staff_ayuda(request):
+    return render(request, 'cotizador_app/staff_ayuda.html')

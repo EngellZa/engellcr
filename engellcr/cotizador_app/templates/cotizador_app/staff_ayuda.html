@@ -1,0 +1,103 @@
+{% extends 'cotizador_app/staff_base.html' %}
+{% block title %}Ayuda{% endblock %}
+{% block page_title %}Ayuda del administrador{% endblock %}
+{% block content %}
+<div class="card p-4">
+  <p class="text-muted">Guía del panel de administración. Se actualiza cada vez que agregamos o cambiamos una función administrativa.</p>
+
+  <div class="accordion" id="staffAyudaAccordion">
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#s1">
+          <i class="bi bi-shield-lock-fill me-2"></i> Roles y accesos
+        </button>
+      </h2>
+      <div id="s1" class="accordion-collapse collapse show" data-bs-parent="#staffAyudaAccordion">
+        <div class="accordion-body">
+          <ul class="mb-0">
+            <li>El acceso a este panel se controla por rol (<code>admin</code> / <code>support</code>), no por el flag de superusuario de Django — se asigna en la tabla de roles de usuario, no desde <code>/admin/</code>.</li>
+            <li><strong>admin:</strong> puede ver y modificar (aprobar/rechazar SINPE, editar planes, cambiar suscripciones).</li>
+            <li><strong>support:</strong> acceso de solo lectura a las mismas secciones — puede buscar y revisar, pero no aprobar, rechazar ni editar.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s2">
+          <i class="bi bi-speedometer2 me-2"></i> Dashboard
+        </button>
+      </h2>
+      <div id="s2" class="accordion-collapse collapse" data-bs-parent="#staffAyudaAccordion">
+        <div class="accordion-body">
+          <p class="mb-0">Resumen general: negocios activos, suscripciones activas, comprobantes SINPE pendientes de revisión y pagos pendientes.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s3">
+          <i class="bi bi-people me-2"></i> Usuarios y Negocios
+        </button>
+      </h2>
+      <div id="s3" class="accordion-collapse collapse" data-bs-parent="#staffAyudaAccordion">
+        <div class="accordion-body">
+          <ul class="mb-0">
+            <li><strong>Usuarios:</strong> buscá por correo, nombre o negocio; mostrás sus roles asignados.</li>
+            <li><strong>Negocios:</strong> el detalle de un negocio muestra su suscripción actual, historial de pagos, cotizaciones, y permite agregar notas internas (solo visibles para el equipo, no para el cliente).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s4">
+          <i class="bi bi-diagram-3 me-2"></i> Planes y Suscripciones
+        </button>
+      </h2>
+      <div id="s4" class="accordion-collapse collapse" data-bs-parent="#staffAyudaAccordion">
+        <div class="accordion-body">
+          <ul class="mb-0">
+            <li><strong>Planes:</strong> editá precio y límite mensual de cotizaciones de cada plan (solo rol <code>admin</code>).</li>
+            <li><strong>Suscripciones:</strong> filtrá por negocio o estado, cambiá el estado (activa/vencida/cancelada) o poné un <em>quota override</em> manual para un negocio puntual.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s5">
+          <i class="bi bi-phone me-2"></i> Cola SINPE y Pagos
+        </button>
+      </h2>
+      <div id="s5" class="accordion-collapse collapse" data-bs-parent="#staffAyudaAccordion">
+        <div class="accordion-body">
+          <ul class="mb-0">
+            <li><strong>Cola SINPE:</strong> revisá los comprobantes subidos por los clientes. Al aprobar, la suscripción se activa automáticamente y se le envía un correo de confirmación; al rechazar, es obligatorio indicar el motivo.</li>
+            <li><strong>Pagos:</strong> buscá por referencia, negocio o estado; cada pago muestra su historial de eventos (útil para pagos por pasarela como Tilopay/PayPal).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s6">
+          <i class="bi bi-journal-text me-2"></i> Auditoría
+        </button>
+      </h2>
+      <div id="s6" class="accordion-collapse collapse" data-bs-parent="#staffAyudaAccordion">
+        <div class="accordion-body">
+          <p class="mb-0">Registro de todas las acciones administrativas relevantes (aprobaciones/rechazos SINPE, cambios de plan, overrides de cuota) con quién las hizo y cuándo. Filtrable por tipo de acción.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

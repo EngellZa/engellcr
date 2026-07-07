@@ -1,0 +1,95 @@
+{% extends 'cotizador_app/base.html' %}
+{% block title %}Ayuda{% endblock %}
+{% block page_title %}Ayuda{% endblock %}
+{% block content %}
+<div class="card p-4">
+  <p class="text-muted">Guía rápida de Cotización Express CR. Si agregamos funciones nuevas, esta página se actualiza junto con ellas.</p>
+
+  <div class="accordion" id="ayudaAccordion">
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#a1">
+          <i class="bi bi-flag-fill me-2"></i> Primeros pasos
+        </button>
+      </h2>
+      <div id="a1" class="accordion-collapse collapse show" data-bs-parent="#ayudaAccordion">
+        <div class="accordion-body">
+          <ol class="mb-0">
+            <li>Al registrarte recibís un correo de verificación — hasta que confirmás el enlace, el panel queda bloqueado (podés reenviarlo desde la pantalla de "verificación pendiente").</li>
+            <li>Completá el <strong>perfil de tu negocio</strong> (nombre, logo, colores, moneda, datos SINPE) en <em>Configuración</em>. Esos datos aparecen en tus cotizaciones en PDF.</li>
+            <li>Empezás automáticamente con un <strong>Plan de Prueba Gratis</strong> con un límite de cotizaciones — podés ver tu uso en el Dashboard.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a2">
+          <i class="bi bi-people-fill me-2"></i> Clientes
+        </button>
+      </h2>
+      <div id="a2" class="accordion-collapse collapse" data-bs-parent="#ayudaAccordion">
+        <div class="accordion-body">
+          <ul class="mb-0">
+            <li>Creá clientes desde <em>Clientes → Nuevo Cliente</em> con nombre, empresa, correo y teléfono.</li>
+            <li>Al entrar al detalle de un cliente ves su historial de cotizaciones y los ítems que suele comprar, y podés crearle una cotización nueva directamente pre-seleccionado.</li>
+            <li>Borrar un cliente es una eliminación lógica: no se pierde el historial de cotizaciones ya generadas.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a3">
+          <i class="bi bi-box-seam me-2"></i> Productos y Servicios
+        </button>
+      </h2>
+      <div id="a3" class="accordion-collapse collapse" data-bs-parent="#ayudaAccordion">
+        <div class="accordion-body">
+          <p class="mb-0">Registrá tus productos/servicios con precio unitario e impuesto (%). Al agregarlos a una cotización, el precio e impuesto se autocompletan — igual podés ajustarlos línea por línea.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a4">
+          <i class="bi bi-file-earmark-text-fill me-2"></i> Cotizaciones
+        </button>
+      </h2>
+      <div id="a4" class="accordion-collapse collapse" data-bs-parent="#ayudaAccordion">
+        <div class="accordion-body">
+          <ul class="mb-0">
+            <li><strong>Crear:</strong> elegí cliente, fechas y agregá ítems (producto o descripción libre). Los totales se calculan solos.</li>
+            <li><strong>Editar / eliminar:</strong> solo mientras está en estado <em>Borrador</em>. Una vez enviada, ya no se puede borrar (queda como historial).</li>
+            <li><strong>Duplicar:</strong> crea una copia en borrador con los mismos ítems, lista para ajustar cliente o precios.</li>
+            <li><strong>PDF:</strong> se genera con tu marca (logo, colores). Si no cambiaste nada, descargar de nuevo reutiliza el mismo PDF en vez de regenerarlo.</li>
+            <li><strong>Enviar / Compartir:</strong> por correo al cliente, o generá un enlace público para compartir por WhatsApp — desde ahí tu cliente puede aprobar o rechazar la cotización sin necesidad de cuenta.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a5">
+          <i class="bi bi-credit-card-fill me-2"></i> Plan y Pagos
+        </button>
+      </h2>
+      <div id="a5" class="accordion-collapse collapse" data-bs-parent="#ayudaAccordion">
+        <div class="accordion-body">
+          <ul class="mb-0">
+            <li>En <em>Plan y Pagos</em> ves tu uso actual y podés mejorar de plan cuando lo necesités.</li>
+            <li>Métodos de pago disponibles: <strong>SINPE Móvil</strong> (subís el comprobante y un administrador lo revisa), y próximamente Tilopay/PayPal.</li>
+            <li>Tu plan se activa automáticamente apenas se aprueba el pago — no hace falta que hagas nada más.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

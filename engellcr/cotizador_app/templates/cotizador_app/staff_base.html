@@ -30,6 +30,7 @@
   <a href="{% url 'cotizador_app:staff_pagos' %}" class="nav-link {% if 'pago' in request.resolver_match.url_name %}active{% endif %}"><i class="bi bi-credit-card"></i> Pagos</a>
   <a href="{% url 'cotizador_app:staff_sinpe_cola' %}" class="nav-link {% if 'sinpe' in request.resolver_match.url_name %}active{% endif %}"><i class="bi bi-phone"></i> Cola SINPE</a>
   <a href="{% url 'cotizador_app:staff_auditoria' %}" class="nav-link {% if request.resolver_match.url_name == 'staff_auditoria' %}active{% endif %}"><i class="bi bi-journal-text"></i> Auditoría</a>
+  <a href="{% url 'cotizador_app:staff_ayuda' %}" class="nav-link {% if request.resolver_match.url_name == 'staff_ayuda' %}active{% endif %}"><i class="bi bi-question-circle"></i> Ayuda</a>
   <a href="{% url 'cotizador_app:dashboard' %}" class="nav-link mt-3"><i class="bi bi-box-arrow-left"></i> Volver al panel</a>
 </nav>
 <div class="main-content">
