@@ -1,0 +1,86 @@
+{% extends 'cotizador_app/base.html' %}
+{% load cotizador_tags %}
+{% block title %}Detalle de suscripción{% endblock %}
+{% block page_title %}Detalle de suscripción (admin){% endblock %}
+{% block content %}
+<p class="text-muted small">Vista extendida visible solo para usuarios con rol <code>admin</code> — historial completo de suscripciones, uso y pagos de tu negocio.</p>
+
+<div class="card p-3 mb-3">
+  <h6 class="text-muted small mb-2">Suscripciones (historial completo)</h6>
+  <div class="table-responsive">
+    <table class="table table-sm mb-0">
+      <thead><tr><th>ID</th><th>Plan</th><th>Estado</th><th>Inicio ciclo</th><th>Fin ciclo</th><th>Quota override</th><th>Límite efectivo</th><th>Creada</th></tr></thead>
+      <tbody>
+      {% for s in subscriptions %}
+        <tr>
+          <td>{{ s.id }}</td>
+          <td>{{ s.plan.name }}</td>
+          <td><span class="badge text-bg-secondary">{{ s.get_status_display }}</span></td>
+          <td>{{ s.billing_cycle_start|date:"d/m/Y H:i"|default:"—" }}</td>
+          <td>{{ s.billing_cycle_end|date:"d/m/Y H:i"|default:"—" }}</td>
+          <td>{{ s.quota_override|default:"—" }}</td>
+          <td>{{ s.effective_limit|default:"∞" }}</td>
+          <td>{{ s.created_at|date:"d/m/Y H:i" }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="8" class="text-center text-muted py-3">Sin suscripciones registradas.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card p-3 mb-3">
+  <h6 class="text-muted small mb-2">Registros de uso</h6>
+  <div class="table-responsive">
+    <table class="table table-sm mb-0">
+      <thead><tr><th>ID</th><th>Suscripción</th><th>Inicio período</th><th>Fin período</th><th>Usadas</th><th>Límite</th><th>Bloqueada</th></tr></thead>
+      <tbody>
+      {% for u in usage_records %}
+        <tr>
+          <td>{{ u.id }}</td>
+          <td>{{ u.subscription.plan.name|default:"—" }}</td>
+          <td>{{ u.period_start|date:"d/m/Y H:i" }}</td>
+          <td>{{ u.period_end|date:"d/m/Y H:i"|default:"—" }}</td>
+          <td>{{ u.quotations_used }}</td>
+          <td>{{ u.quota_limit|default:"∞" }}</td>
+          <td>{% if u.is_blocked %}<span class="badge text-bg-danger">Sí</span>{% else %}<span class="badge text-bg-success">No</span>{% endif %}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" class="text-center text-muted py-3">Sin registros de uso.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card p-3">
+  <h6 class="text-muted small mb-2">Pagos (con referencias internas y eventos de webhook)</h6>
+  <div class="table-responsive">
+    <table class="table table-sm mb-0">
+      <thead><tr><th>Ref. interna</th><th>Ref. externa</th><th>Plan</th><th>Método</th><th>Estado</th><th class="text-end">Monto</th><th>Creado</th><th>Completado</th><th>Eventos</th></tr></thead>
+      <tbody>
+      {% for p in payments %}
+        <tr>
+          <td>{{ p.internal_reference }}</td>
+          <td>{{ p.external_reference|default:"—" }}</td>
+          <td>{{ p.plan.name }}</td>
+          <td>{{ p.get_provider_display }}</td>
+          <td><span class="badge text-bg-secondary">{{ p.get_status_display }}</span></td>
+          <td class="text-end">{{ p.amount|moneda }} {{ p.currency }}</td>
+          <td>{{ p.created_at|date:"d/m/Y H:i" }}</td>
+          <td>{{ p.completed_at|date:"d/m/Y H:i"|default:"—" }}</td>
+          <td>
+            {% for e in p.events.all %}
+              <div class="small text-muted">{{ e.event_type }} · {{ e.received_at|date:"d/m/Y H:i" }} {% if e.processed %}✓{% endif %}</div>
+            {% empty %}—{% endfor %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="9" class="text-center text-muted py-3">Sin pagos registrados.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

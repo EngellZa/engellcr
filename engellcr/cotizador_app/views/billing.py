@@ -2,8 +2,8 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 
-from ..decorators import business_required
-from ..models import SubscriptionPlan, Payment
+from ..decorators import business_required, role_required
+from ..models import SubscriptionPlan, Payment, Role
 from ..payments import get_provider
 from ..payments.sinpe import create_pending_sinpe_payment
 from ..ratelimit import rate_limit
@@ -55,3 +55,19 @@ def pagos_lista(request):
     paginator = Paginator(qs, 20)
     page = paginator.get_page(request.GET.get('page'))
     return render(request, 'cotizador_app/pagos_lista.html', {'page_obj': page})
+
+
+@business_required
+@role_required(Role.ADMIN)
+def plan_detalle_admin(request):
+    """Extended subscription view for the business's own account, only visible to
+    users holding the internal admin role — full history/internal fields the regular
+    Plan y Pagos page doesn't show (past subscriptions, quota overrides, usage records,
+    payment provider references, webhook events)."""
+    business = request.business
+    context = {
+        'subscriptions': business.subscriptions.select_related('plan').order_by('-created_at'),
+        'usage_records': business.usage_records.select_related('subscription__plan').order_by('-created_at'),
+        'payments': business.payments.select_related('plan').prefetch_related('events').order_by('-created_at'),
+    }
+    return render(request, 'cotizador_app/plan_detalle_admin.html', context)

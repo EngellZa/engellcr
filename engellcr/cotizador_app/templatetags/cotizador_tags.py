@@ -1,6 +1,13 @@
 from django import template
 
+from ..decorators import user_has_role
+
 register = template.Library()
+
+
+@register.filter
+def has_role(user, code):
+    return user_has_role(user, code)
 
 
 @register.filter

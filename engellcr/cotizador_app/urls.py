@@ -65,6 +65,7 @@ urlpatterns = [
     # Plan y pagos
     path('panel/plan/', billing.plan_actual, name='plan_actual'),
     path('panel/plan/mejorar/', billing.plan_mejorar, name='plan_mejorar'),
+    path('panel/plan/detalle-admin/', billing.plan_detalle_admin, name='plan_detalle_admin'),
     path('panel/pagos/', billing.pagos_lista, name='pagos_lista'),
     path('panel/pagos/iniciar/<int:plan_id>/<str:metodo>/', billing.pago_iniciar, name='pago_iniciar'),
     path('panel/pagos/sinpe/nuevo/<int:payment_id>/', sinpe.sinpe_subir_comprobante, name='sinpe_subir_comprobante'),
