@@ -15,7 +15,7 @@
     <tbody>
     {% for c in page_obj %}
       <tr>
-        <td>{{ c.name }}</td><td>{{ c.company_name }}</td><td>{{ c.email }}</td><td>{{ c.phone }}</td>
+        <td><a href="{% url 'cotizador_app:cliente_detalle' c.pk %}">{{ c.name }}</a></td><td>{{ c.company_name }}</td><td>{{ c.email }}</td><td>{{ c.phone }}</td>
         <td class="text-end">
           <a href="{% url 'cotizador_app:cliente_editar' c.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
           <a href="{% url 'cotizador_app:cliente_eliminar' c.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>

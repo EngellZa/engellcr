@@ -74,9 +74,11 @@ def cotizacion_crear(request):
             return redirect('cotizador_app:cotizacion_detalle', pk=quotation.pk)
     else:
         today = date.today()
-        form = QuotationForm(business=request.business, initial={
-            'issue_date': today, 'valid_until': today + timedelta(days=3),
-        })
+        initial = {'issue_date': today, 'valid_until': today + timedelta(days=3)}
+        cliente_id = request.GET.get('cliente')
+        if cliente_id and cliente_id.isdigit():
+            initial['client'] = cliente_id
+        form = QuotationForm(business=request.business, initial=initial)
         formset = QuotationItemFormSet(instance=Quotation(), prefix='items',
                                         form_kwargs={'business': request.business})
     return render(request, 'cotizador_app/cotizacion_form.html', {

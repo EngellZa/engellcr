@@ -40,6 +40,7 @@ urlpatterns = [
     # Clientes
     path('panel/clientes/', clients.cliente_lista, name='cliente_lista'),
     path('panel/clientes/nuevo/', clients.cliente_crear, name='cliente_crear'),
+    path('panel/clientes/<int:pk>/', clients.cliente_detalle, name='cliente_detalle'),
     path('panel/clientes/<int:pk>/editar/', clients.cliente_editar, name='cliente_editar'),
     path('panel/clientes/<int:pk>/eliminar/', clients.cliente_eliminar, name='cliente_eliminar'),
 
