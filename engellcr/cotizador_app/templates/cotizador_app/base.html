@@ -61,6 +61,13 @@
     }
     .card { border: none; box-shadow: 0 1px 6px rgba(0,0,0,.07); border-radius: 12px; }
     .btn-primary { background: var(--primary); border-color: var(--primary); }
+    .btn-cta {
+      background: var(--accent); border-color: var(--accent); color: #1a1200;
+      font-weight: 700; padding: .55rem 1.3rem; border-radius: 8px;
+      box-shadow: 0 4px 14px rgba(243,156,18,.35);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .btn-cta:hover { background: #e08e0b; border-color: #e08e0b; color: #1a1200; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(243,156,18,.45); }
 
     @media (max-width: 768px) {
       .sidebar { transform: translateX(-100%); }
