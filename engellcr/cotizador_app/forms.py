@@ -101,8 +101,8 @@ class QuotationForm(forms.ModelForm):
         fields = ['client', 'issue_date', 'valid_until', 'currency', 'notes', 'terms']
         widgets = {
             'client': forms.Select(attrs={'class': 'form-select'}),
-            'issue_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'valid_until': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'issue_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}, format='%Y-%m-%d'),
+            'valid_until': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}, format='%Y-%m-%d'),
             'currency': forms.Select(attrs={'class': 'form-select'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'terms': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),

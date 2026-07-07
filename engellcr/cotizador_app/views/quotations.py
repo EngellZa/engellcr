@@ -1,3 +1,5 @@
+from datetime import date, timedelta
+
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db import transaction
@@ -71,7 +73,10 @@ def cotizacion_crear(request):
             messages.success(request, f'Cotización {quotation.quote_number} creada.')
             return redirect('cotizador_app:cotizacion_detalle', pk=quotation.pk)
     else:
-        form = QuotationForm(business=request.business)
+        today = date.today()
+        form = QuotationForm(business=request.business, initial={
+            'issue_date': today, 'valid_until': today + timedelta(days=3),
+        })
         formset = QuotationItemFormSet(instance=Quotation(), prefix='items',
                                         form_kwargs={'business': request.business})
     return render(request, 'cotizador_app/cotizacion_form.html', {
