@@ -1,4 +1,10 @@
 <p>Hola {{ user.first_name|default:user.email }},</p>
-<p>Hacé clic en el siguiente enlace para verificar tu correo y activar tu cuenta:</p>
+<p>
+  ¡Bienvenido a <strong>Cotización Express CR</strong>!
+  {% if business %}Tu cuenta y el negocio <strong>{{ business.name }}</strong> ya están listos.{% endif %}
+  Tenés 3 cotizaciones gratis para probar la plataforma, sin necesidad de tarjeta.
+</p>
+<p>Para activar tu cuenta, hacé clic en el siguiente enlace y verificá tu correo:</p>
 <p><a href="{{ verify_url }}">{{ verify_url }}</a></p>
 <p>Este enlace vence en 48 horas.</p>
+<p>— El equipo de Cotización Express CR</p>

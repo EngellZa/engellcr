@@ -49,21 +49,17 @@ def send_transactional_email(to_email, subject, template_name, context, category
     return status == EmailLog.SENT
 
 
-def send_welcome_email(user, business):
-    send_transactional_email(
-        to_email=user.email, subject='Bienvenido a Cotización Express CR',
-        template_name='bienvenida.html', context={'user': user, 'business': business},
-        category='welcome', business=business,
-    )
-
-
-def send_verification_email(request, user):
+def send_verification_email(request, user, business=None):
+    """Sent once at registration (and on 'reenviar correo'): combines the welcome message
+    with the verification link — a new user used to get two separate emails, which read
+    as redundant/spammy. One message covering both is clearer."""
     token = make_verification_token(user.id)
     verify_url = request.build_absolute_uri(reverse('cotizador_app:verificar_correo', args=[token]))
     send_transactional_email(
-        to_email=user.email, subject='Verificá tu correo — Cotización Express CR',
-        template_name='verifica_correo.html', context={'user': user, 'verify_url': verify_url},
-        category='email_verification',
+        to_email=user.email, subject='Bienvenido a Cotización Express CR — Verificá tu correo',
+        template_name='verifica_correo.html',
+        context={'user': user, 'business': business, 'verify_url': verify_url},
+        category='email_verification', business=business,
     )
     profile = user.cotizador_profile
     profile.email_verification_sent_at = timezone.now()

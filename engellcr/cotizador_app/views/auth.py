@@ -7,8 +7,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
 
-from ..decorators import cotizador_login_required
-from ..emailing import send_verification_email, send_welcome_email, read_verification_token
+from ..decorators import cotizador_login_required, get_current_business
+from ..emailing import send_verification_email, read_verification_token
 from ..forms import RegistroForm, CotizadorLoginForm
 from ..models import UserProfile
 from ..ratelimit import rate_limit
@@ -56,8 +56,7 @@ def register(request):
                 UserProfile.objects.create(user=user)
                 business = create_trial_business(user, form.cleaned_data['business_name'])
             auth_login(request, user)
-            send_verification_email(request, user)
-            send_welcome_email(user, business)
+            send_verification_email(request, user, business=business)
             messages.success(request, 'Cuenta creada. Revisá tu correo para verificar tu cuenta.')
             return redirect('cotizador_app:verificacion_pendiente')
     else:
@@ -78,7 +77,7 @@ def verificacion_pendiente(request):
 def reenviar_verificacion(request):
     profile = request.user.cotizador_profile
     if not profile.email_verified:
-        send_verification_email(request, request.user)
+        send_verification_email(request, request.user, business=get_current_business(request))
         messages.success(request, 'Te reenviamos el correo de verificación.')
     return redirect('cotizador_app:verificacion_pendiente')
 
