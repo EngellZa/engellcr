@@ -104,7 +104,17 @@
       background: #25D366; color: #fff; border-radius: 50px; padding: .8rem 1.3rem;
       box-shadow: 0 8px 20px rgba(0,0,0,.25); text-decoration: none; font-weight:600; font-size:.9rem;
     }
+    /* ── CTA groups (hero + mid-page + final band) ── */
+    .cta-trust { font-size: .85rem; color: rgba(255,255,255,.68); display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; }
+    .cta-trust i { color: #34d399; }
+    .cta-clarify { font-size: .78rem; color: rgba(255,255,255,.48); max-width: 520px; }
+    .mid-cta { border: 1px solid var(--line); background: var(--surface); border-radius: 20px; padding: 3rem; text-align:center; }
+
     @media (max-width: 767px) { .hero h1 { font-size: 2.1rem; } .section { padding: 3.5rem 0; } }
+    @media (max-width: 575px) {
+      .cta-buttons { flex-direction: column; align-items: stretch; }
+      .cta-buttons .btn { width: 100%; }
+    }
   </style>
 </head>
 <body>
@@ -123,23 +133,29 @@
   <div class="container">
     <div class="row align-items-center g-5">
       <div class="col-lg-6">
-        <span class="hero-badge"><i class="bi bi-stars"></i> Hecho para negocios de Costa Rica y LatAm</span>
-        <h1>Crea cotizaciones profesionales en minutos</h1>
+        <span class="hero-badge"><i class="bi bi-stars"></i> Hecho para negocios de Costa Rica — listo para crecer a LatAm</span>
+        <h1>Cotizaciones profesionales por WhatsApp para pequeños negocios</h1>
         <p class="lead mt-3 mb-4">
-          Genera cotizaciones en PDF con tu logo, envíalas por correo o WhatsApp y organiza tus clientes
-          sin depender de Excel.
+          Creá cotizaciones en PDF con tu logo, enviálas al cliente y da seguimiento sin depender de Excel.
         </p>
-        <div class="d-flex flex-wrap gap-2">
-          <a href="{% url 'cotizador_app:register' %}" class="btn btn-accent btn-lg">Probar gratis — sin tarjeta</a>
-          <a href="#planes" class="btn btn-outline-light2 btn-lg">Ver planes</a>
-        </div>
-        <div class="d-flex align-items-center gap-3 mt-4">
+        <div class="d-flex flex-wrap gap-2 cta-buttons">
+          <a href="{% url 'cotizador_app:register' %}" class="btn btn-accent btn-lg">Crear mi primera cotización gratis</a>
           {% if WHATSAPP_CONTACT_NUMBER %}
-          <a href="https://wa.me/{{ WHATSAPP_CONTACT_NUMBER }}" target="_blank" class="text-white text-decoration-none small d-flex align-items-center gap-2">
-            <i class="bi bi-whatsapp fs-5" style="color:#25D366;"></i> Hablar por WhatsApp
-          </a>
+          <a href="https://wa.me/{{ WHATSAPP_CONTACT_NUMBER }}?text=Hola%2C%20quiero%20ver%20una%20demo%20de%20Cotizaci%C3%B3n%20Express" target="_blank" class="btn btn-outline-light2 btn-lg"><i class="bi bi-whatsapp"></i> Solicitar demo por WhatsApp</a>
+          {% else %}
+          <a href="#planes" class="btn btn-outline-light2 btn-lg">Ver planes</a>
           {% endif %}
         </div>
+        <div class="cta-trust mt-3">
+          <span><i class="bi bi-check-circle-fill"></i> Gratis para empezar</span>
+          <span class="text-white-50">·</span>
+          <span><i class="bi bi-check-circle-fill"></i> Sin tarjeta de crédito</span>
+          <span class="text-white-50">·</span>
+          <span><i class="bi bi-check-circle-fill"></i> Ideal para técnicos, contratistas y negocios de servicios</span>
+        </div>
+        <p class="cta-clarify mt-3 mb-0">
+          Cotización Express te ayuda a crear y gestionar cotizaciones profesionales. No reemplaza la factura electrónica.
+        </p>
       </div>
       <div class="col-lg-6">
         <div class="mock-window">
@@ -192,7 +208,7 @@
   </div>
 </div>
 
-<section class="section">
+<section class="section" id="como-funciona">
   <div class="container">
     <div class="text-center mb-5">
       <div class="eyebrow mb-2">Por qué elegirnos</div>
@@ -226,6 +242,19 @@
           <h6>Clientes organizados</h6>
           <p class="small mb-0">Olvidate del Excel: todo tu negocio en un solo lugar.</p>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="mid-cta">
+      <h2 class="mb-2">Deja de perder tiempo haciendo cotizaciones en Excel</h2>
+      <p class="mb-4">Organiza tus clientes, genera PDFs profesionales y envía tus propuestas en minutos desde una sola plataforma.</p>
+      <div class="d-flex flex-wrap justify-content-center gap-2 cta-buttons">
+        <a href="{% url 'cotizador_app:register' %}" class="btn btn-primary btn-lg">Empezar gratis</a>
+        <a href="#como-funciona" class="btn btn-outline-secondary btn-lg">Ver cómo funciona</a>
       </div>
     </div>
   </div>
@@ -366,8 +395,8 @@
 <section class="section-tight">
   <div class="container">
     <div class="cta-band text-center">
-      <h2 class="text-white mb-2">Empezá a cotizar como un profesional hoy</h2>
-      <p class="mb-4" style="color: rgba(255,255,255,.75);">3 cotizaciones gratis. Sin tarjeta. Configurás tu negocio en menos de 5 minutos.</p>
+      <h2 class="text-white mb-2">Empieza hoy con una cotización profesional</h2>
+      <p class="mb-4" style="color: rgba(255,255,255,.75);">Prueba Cotización Express gratis y valida si se adapta a tu negocio antes de elegir un plan.</p>
       <a href="{% url 'cotizador_app:register' %}" class="btn btn-accent btn-lg">Crear cuenta gratis</a>
     </div>
   </div>
