@@ -81,6 +81,28 @@
 (function () {
   var tbody = document.getElementById('items-tbody');
   var totalForms = document.getElementById('id_items-TOTAL_FORMS');
+  var initialForms = document.getElementById('id_items-INITIAL_FORMS');
+
+  // Existing (already-saved) rows keep their original items-N index — the server matches
+  // them to DB rows by position among the first INITIAL_FORMS forms. Only "new" rows
+  // (added via "+ Agregar ítem", not yet saved) get renumbered here, so that removing one
+  // never leaves a gap where TOTAL_FORMS claims more forms than actually exist in the DOM.
+  function renumberRows() {
+    var rows = tbody.querySelectorAll('.item-row');
+    var initialCount = parseInt(initialForms.value, 10);
+    rows.forEach(function (row, i) {
+      if (i < initialCount) return;
+      var field = row.querySelector('[name^="items-"]');
+      if (!field) return;
+      var oldIndex = field.name.match(/^items-(\d+)-/)[1];
+      if (oldIndex === String(i)) return;
+      row.querySelectorAll('[name^="items-' + oldIndex + '-"]').forEach(function (el) {
+        el.name = el.name.replace('items-' + oldIndex + '-', 'items-' + i + '-');
+        if (el.id) el.id = el.id.replace('id_items-' + oldIndex + '-', 'id_items-' + i + '-');
+      });
+    });
+    totalForms.value = rows.length;
+  }
 
   function bindProductAutofill(row) {
     var select = row.querySelector('.item-product');
@@ -100,7 +122,7 @@
   function bindRemove(row) {
     var btn = row.querySelector('.row-remove-new');
     if (btn) {
-      btn.addEventListener('click', function () { row.remove(); });
+      btn.addEventListener('click', function () { row.remove(); renumberRows(); });
     }
     var delCheckbox = row.querySelector('.row-delete-existing');
     if (delCheckbox) {
@@ -126,7 +148,7 @@
     tbody.appendChild(newRow);
     bindProductAutofill(newRow);
     bindRemove(newRow);
-    totalForms.value = index + 1;
+    renumberRows();
   });
 })();
 </script>
