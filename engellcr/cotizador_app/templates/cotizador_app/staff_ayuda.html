@@ -17,8 +17,8 @@
         <div class="accordion-body">
           <ul class="mb-0">
             <li>El acceso a este panel se controla por rol (<code>admin</code> / <code>support</code>), no por el flag de superusuario de Django — se asigna en la tabla de roles de usuario, no desde <code>/admin/</code>.</li>
-            <li><strong>admin:</strong> puede ver y modificar (aprobar/rechazar SINPE, editar planes, cambiar suscripciones).</li>
-            <li><strong>support:</strong> acceso de solo lectura a las mismas secciones — puede buscar y revisar, pero no aprobar, rechazar ni editar.</li>
+            <li><strong>admin:</strong> acceso completo — aprobar/rechazar SINPE, editar planes, cambiar suscripciones, agregar notas internas.</li>
+            <li><strong>support:</strong> puede aprobar y rechazar comprobantes SINPE igual que admin, pero no puede editar planes, cambiar/override suscripciones ni agregar notas internas — esas acciones siguen siendo solo de <code>admin</code>.</li>
           </ul>
         </div>
       </div>

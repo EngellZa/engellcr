@@ -18,19 +18,16 @@
   </div>
   <div class="col-md-6">
     <div class="card p-3">
-      {% if not is_admin %}
-        <div class="alert alert-warning py-2 small mb-3">Tenés acceso de <strong>solo lectura</strong> (rol soporte). Solo un administrador puede aprobar o rechazar.</div>
-      {% endif %}
       {% if receipt.status == 'pending_review' %}
       <form method="post" class="mb-3">
         {% csrf_token %}<input type="hidden" name="action" value="aprobar">
-        <button type="submit" class="btn btn-success w-100" {% if not is_admin %}disabled{% endif %}>✅ Aprobar y activar plan</button>
+        <button type="submit" class="btn btn-success w-100">✅ Aprobar y activar plan</button>
       </form>
       <form method="post">
         {% csrf_token %}<input type="hidden" name="action" value="rechazar">
         <label class="form-label small">Motivo de rechazo (obligatorio)</label>
-        <textarea name="reason" class="form-control mb-2" rows="2" {% if not is_admin %}disabled{% endif %}></textarea>
-        <button type="submit" class="btn btn-outline-danger w-100" {% if not is_admin %}disabled{% endif %}>❌ Rechazar</button>
+        <textarea name="reason" class="form-control mb-2" rows="2"></textarea>
+        <button type="submit" class="btn btn-outline-danger w-100">❌ Rechazar</button>
       </form>
       {% else %}
         <p class="text-muted">Este comprobante ya fue {{ receipt.get_status_display|lower }}{% if receipt.rejection_reason %}: {{ receipt.rejection_reason }}{% endif %}.</p>

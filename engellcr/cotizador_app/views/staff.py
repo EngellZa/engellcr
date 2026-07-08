@@ -141,14 +141,9 @@ def staff_sinpe_cola(request):
 
 @role_required(Role.ADMIN, Role.SUPPORT)
 def staff_sinpe_revisar(request, pk):
-    from ..decorators import user_has_role
     receipt = get_object_or_404(SinpePaymentReceipt.objects.select_related('business', 'payment', 'payment__plan'), pk=pk)
-    is_admin = user_has_role(request.user, Role.ADMIN)
 
     if request.method == 'POST':
-        if not is_admin:
-            messages.error(request, 'Solo un administrador puede aprobar o rechazar pagos.')
-            return redirect('cotizador_app:staff_sinpe_revisar', pk=pk)
         action = request.POST.get('action')
         if action == 'aprobar':
             approve_receipt(receipt, request.user)
@@ -167,7 +162,7 @@ def staff_sinpe_revisar(request, pk):
     from ..storage_sinpe import get_signed_url
     receipt_url = get_signed_url(receipt.cloudinary_public_id, receipt.resource_type)
     return render(request, 'cotizador_app/staff_sinpe_revisar.html', {
-        'receipt': receipt, 'is_admin': is_admin, 'receipt_url': receipt_url,
+        'receipt': receipt, 'receipt_url': receipt_url,
     })
 
 
