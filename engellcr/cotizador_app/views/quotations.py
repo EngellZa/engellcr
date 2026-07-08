@@ -74,7 +74,11 @@ def cotizacion_crear(request):
             return redirect('cotizador_app:cotizacion_detalle', pk=quotation.pk)
     else:
         today = date.today()
-        initial = {'issue_date': today, 'valid_until': today + timedelta(days=3)}
+        initial = {
+            'issue_date': today, 'valid_until': today + timedelta(days=3),
+            'notes': 'Gracias por su interés en nuestros productos y servicios.',
+            'terms': 'Cotización válida por el plazo indicado arriba. Precios sujetos a cambios sin previo aviso.',
+        }
         cliente_id = request.GET.get('cliente')
         if cliente_id and cliente_id.isdigit():
             initial['client'] = cliente_id
