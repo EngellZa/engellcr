@@ -55,14 +55,14 @@
 
 <div class="card p-4">
   <table class="table">
-    <thead><tr><th>Descripción</th><th class="text-end">Cant.</th><th class="text-end">Precio</th><th class="text-end">Desc.</th><th class="text-end">Imp.</th><th class="text-end">Total</th></tr></thead>
+    <thead><tr><th>Descripción</th><th class="text-end">Cant.</th><th class="text-end">Precio</th>{% if quotation.discount_total %}<th class="text-end">Desc.</th>{% endif %}<th class="text-end">Imp.</th><th class="text-end">Total</th></tr></thead>
     <tbody>
     {% for item in quotation.items.all %}
       <tr>
         <td>{{ item.description }}</td>
         <td class="text-end">{{ item.quantity|numero }}</td>
         <td class="text-end">{{ item.unit_price|moneda:quotation.simbolo }}</td>
-        <td class="text-end">{{ item.discount_pct|numero }}%</td>
+        {% if quotation.discount_total %}<td class="text-end">{{ item.discount_pct|numero }}%</td>{% endif %}
         <td class="text-end">{{ item.tax_pct|numero }}%</td>
         <td class="text-end">{{ item.line_total|moneda:quotation.simbolo }}</td>
       </tr>

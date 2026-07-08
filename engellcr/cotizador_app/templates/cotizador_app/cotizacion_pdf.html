@@ -54,7 +54,7 @@
 
   <table class="items">
     <thead>
-      <tr><th>Descripción</th><th>Cant.</th><th>Precio</th><th>Desc.</th><th>Imp.</th><th>Total</th></tr>
+      <tr><th>Descripción</th><th>Cant.</th><th>Precio</th>{% if quotation.discount_total %}<th>Desc.</th>{% endif %}<th>Imp.</th><th>Total</th></tr>
     </thead>
     <tbody>
     {% for item in quotation.items.all %}
@@ -62,7 +62,7 @@
         <td>{{ item.description }}</td>
         <td class="num">{{ item.quantity|numero }}</td>
         <td class="num">{{ item.unit_price|moneda:quotation.simbolo }}</td>
-        <td class="num">{{ item.discount_pct|numero }}%</td>
+        {% if quotation.discount_total %}<td class="num">{{ item.discount_pct|numero }}%</td>{% endif %}
         <td class="num">{{ item.tax_pct|numero }}%</td>
         <td class="num">{{ item.line_total|moneda:quotation.simbolo }}</td>
       </tr>
