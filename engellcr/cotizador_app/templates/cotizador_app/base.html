@@ -115,6 +115,13 @@
     <i class="bi bi-question-circle-fill"></i> Ayuda
   </a>
 
+  {% if request.user|has_role:'admin' or request.user|has_role:'support' %}
+  <div class="nav-section">Administración</div>
+  <a href="{% url 'cotizador_app:staff_dashboard' %}" class="nav-link">
+    <i class="bi bi-shield-lock-fill"></i> Panel de Administración
+  </a>
+  {% endif %}
+
   <div class="mt-auto">
     <div class="nav-section">Sesión</div>
     <form method="post" action="{% url 'cotizador_app:logout' %}">
