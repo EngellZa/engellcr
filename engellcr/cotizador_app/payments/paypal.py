@@ -7,6 +7,15 @@ from .base import PaymentProvider, WebhookResult
 class PaypalProvider(PaymentProvider):
     code = 'paypal'
 
+    def create_pending_payment(self, business, plan):
+        """PayPal doesn't settle in colones (CRC) — charge in USD instead of the
+        CRC default from PaymentProvider.create_pending_payment."""
+        from ..models import Payment
+        return Payment.objects.create(
+            business=business, plan=plan, provider=self.code,
+            amount=plan.price_usd, currency='USD', status=Payment.PENDING,
+        )
+
     def get_redirect_url(self, payment):
         if not settings.PAYPAL_CLIENT_ID:
             # Not configured yet — architecture is ready, credentials aren't. See PAYPAL_* in .env.example.

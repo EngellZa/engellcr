@@ -74,7 +74,7 @@ class QuotationShareLinkAdmin(admin.ModelAdmin):
 
 @admin.register(SubscriptionPlan)
 class SubscriptionPlanAdmin(admin.ModelAdmin):
-    list_display = ['name', 'code', 'price_crc', 'monthly_quote_limit', 'is_active']
+    list_display = ['name', 'code', 'price_crc', 'price_usd', 'monthly_quote_limit', 'is_active']
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)

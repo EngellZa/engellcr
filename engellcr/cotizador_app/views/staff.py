@@ -72,6 +72,7 @@ def staff_planes(request):
     if request.method == 'POST':
         plan = get_object_or_404(SubscriptionPlan, pk=request.POST.get('plan_id'))
         plan.price_crc = request.POST.get('price_crc') or plan.price_crc
+        plan.price_usd = request.POST.get('price_usd') or plan.price_usd
         limit = request.POST.get('monthly_quote_limit', '').strip()
         plan.monthly_quote_limit = int(limit) if limit else None
         plan.is_active = bool(request.POST.get('is_active'))

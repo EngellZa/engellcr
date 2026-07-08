@@ -12,6 +12,8 @@
         <h6>{{ plan.name }}</h6>
         <label class="form-label small">Precio (₡/mes)</label>
         <input type="number" name="price_crc" value="{{ plan.price_crc|unlocalize }}" class="form-control form-control-sm mb-2" step="0.01">
+        <label class="form-label small">Precio ($/mes) — usado para PayPal</label>
+        <input type="number" name="price_usd" value="{{ plan.price_usd|unlocalize }}" class="form-control form-control-sm mb-2" step="0.01">
         <label class="form-label small">Límite mensual (vacío = ilimitado)</label>
         <input type="number" name="monthly_quote_limit" value="{{ plan.monthly_quote_limit|default_if_none:'' }}" class="form-control form-control-sm mb-2">
         <div class="form-check mb-2">

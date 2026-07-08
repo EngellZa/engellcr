@@ -9,11 +9,12 @@
     <div class="card p-4 h-100">
       <h5>{{ plan.name }}</h5>
       <div class="display-6 fw-bold">{{ plan.price_crc|moneda }}<span class="fs-6 text-muted">/mes</span></div>
+      <div class="text-muted small mb-2">{{ plan.price_usd|moneda:'$' }} USD/mes con PayPal</div>
       <p class="text-muted small">{% if plan.monthly_quote_limit %}{{ plan.monthly_quote_limit }} cotizaciones/mes{% else %}Cotizaciones ilimitadas{% endif %}</p>
       <div class="mt-auto d-grid gap-2">
         <a href="{% url 'cotizador_app:pago_iniciar' plan.id 'sinpe' %}" class="btn btn-primary btn-sm">Pagar por SINPE Móvil</a>
         <a href="{% url 'cotizador_app:pago_iniciar' plan.id 'tilopay' %}" class="btn btn-outline-secondary btn-sm">Pagar con Tilopay</a>
-        <a href="{% url 'cotizador_app:pago_iniciar' plan.id 'paypal' %}" class="btn btn-outline-secondary btn-sm">Pagar con PayPal</a>
+        <a href="{% url 'cotizador_app:pago_iniciar' plan.id 'paypal' %}" class="btn btn-outline-secondary btn-sm">Pagar con PayPal (USD)</a>
       </div>
     </div>
   </div>

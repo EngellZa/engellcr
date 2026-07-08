@@ -76,6 +76,7 @@ def cotizacion_crear(request):
         today = date.today()
         initial = {
             'issue_date': today, 'valid_until': today + timedelta(days=3),
+            'currency': request.business.currency,
             'notes': 'Gracias por su interés en nuestros productos y servicios.',
             'terms': 'Cotización válida por el plazo indicado arriba. Precios sujetos a cambios sin previo aviso.',
         }

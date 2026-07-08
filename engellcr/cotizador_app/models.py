@@ -6,6 +6,32 @@ from django.db import models
 from django.utils import timezone
 
 
+# ─── MONEDAS (Centro y Sudamérica + USD) ────────────────────────────────────
+# Moneda "local" configurable por negocio (según su país) + USD siempre disponible.
+# Compartido por Business.currency y Quotation.currency para no duplicar la lista.
+CURRENCY_CHOICES = [
+    ('CRC', 'Colones (₡) — Costa Rica'),
+    ('NIO', 'Córdobas (C$) — Nicaragua'),
+    ('GTQ', 'Quetzales (Q) — Guatemala'),
+    ('HNL', 'Lempiras (L) — Honduras'),
+    ('PAB', 'Balboas (B/.) — Panamá'),
+    ('COP', 'Pesos colombianos ($) — Colombia'),
+    ('PEN', 'Soles (S/) — Perú'),
+    ('CLP', 'Pesos chilenos ($) — Chile'),
+    ('ARS', 'Pesos argentinos ($) — Argentina'),
+    ('BOB', 'Bolivianos (Bs) — Bolivia'),
+    ('PYG', 'Guaraníes (₲) — Paraguay'),
+    ('UYU', 'Pesos uruguayos ($U) — Uruguay'),
+    ('VES', 'Bolívares (Bs) — Venezuela'),
+    ('USD', 'Dólares ($)'),
+]
+CURRENCY_SYMBOLS = {
+    'CRC': '₡', 'NIO': 'C$', 'GTQ': 'Q', 'HNL': 'L', 'PAB': 'B/.',
+    'COP': '$', 'PEN': 'S/', 'CLP': '$', 'ARS': '$', 'BOB': 'Bs',
+    'PYG': '₲', 'UYU': '$U', 'VES': 'Bs', 'USD': '$',
+}
+
+
 # ─── ROLES ─────────────────────────────────────────────────────────────────
 
 class Role(models.Model):
@@ -61,8 +87,6 @@ class UserProfile(models.Model):
 # ─── NEGOCIO ───────────────────────────────────────────────────────────────
 
 class Business(models.Model):
-    CURRENCY_CHOICES = [('CRC', 'Colones (₡)'), ('USD', 'Dólares ($)')]
-
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='business')
     name = models.CharField('Nombre del negocio', max_length=150)
     legal_id = models.CharField('Cédula jurídica', max_length=30, blank=True)
@@ -173,8 +197,6 @@ class Quotation(models.Model):
         (STATUS_REJECTED, 'Rechazada'),
         (STATUS_EXPIRED, 'Expirada'),
     ]
-    CURRENCY_CHOICES = [('CRC', 'Colones (₡)'), ('USD', 'Dólares ($)')]
-
     business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name='quotations')
     client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name='quotations')
     quote_number = models.CharField(max_length=20)
@@ -211,7 +233,7 @@ class Quotation(models.Model):
 
     @property
     def simbolo(self):
-        return '₡' if self.currency == 'CRC' else '$'
+        return CURRENCY_SYMBOLS.get(self.currency, self.currency)
 
     @property
     def is_editable(self):
@@ -298,6 +320,8 @@ class SubscriptionPlan(models.Model):
     code = models.CharField(max_length=20, unique=True, choices=CODE_CHOICES)
     name = models.CharField(max_length=50)
     price_crc = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    price_usd = models.DecimalField(max_digits=10, decimal_places=2, default=0,
+        help_text='Precio en dólares — usado para cobros por PayPal (no soporta colones) y otros países fuera de Costa Rica')
     monthly_quote_limit = models.PositiveIntegerField(null=True, blank=True, help_text='Vacío = ilimitado')
     is_active = models.BooleanField(default=True)
 
