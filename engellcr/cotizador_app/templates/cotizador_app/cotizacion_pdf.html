@@ -72,7 +72,7 @@
 
   <table class="totals">
     <tr><td>Subtotal</td><td class="num">{{ quotation.subtotal|moneda:quotation.simbolo }}</td></tr>
-    <tr><td>Descuento</td><td class="num">-{{ quotation.discount_total|moneda:quotation.simbolo }}</td></tr>
+    {% if quotation.discount_total %}<tr><td>Descuento</td><td class="num">-{{ quotation.discount_total|moneda:quotation.simbolo }}</td></tr>{% endif %}
     <tr><td>Impuesto</td><td class="num">{{ quotation.tax_total|moneda:quotation.simbolo }}</td></tr>
     <tr class="total-row"><td>Total</td><td class="num">{{ quotation.total|moneda:quotation.simbolo }}</td></tr>
   </table>

@@ -72,7 +72,7 @@
   <div class="d-flex justify-content-end">
     <table class="table table-sm w-auto">
       <tr><td class="text-muted">Subtotal</td><td class="text-end">{{ quotation.subtotal|moneda:quotation.simbolo }}</td></tr>
-      <tr><td class="text-muted">Descuento</td><td class="text-end">-{{ quotation.discount_total|moneda:quotation.simbolo }}</td></tr>
+      {% if quotation.discount_total %}<tr><td class="text-muted">Descuento</td><td class="text-end">-{{ quotation.discount_total|moneda:quotation.simbolo }}</td></tr>{% endif %}
       <tr><td class="text-muted">Impuesto</td><td class="text-end">{{ quotation.tax_total|moneda:quotation.simbolo }}</td></tr>
       <tr class="fw-bold"><td>Total</td><td class="text-end">{{ quotation.total|moneda:quotation.simbolo }}</td></tr>
     </table>
