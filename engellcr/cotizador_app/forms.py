@@ -150,7 +150,7 @@ class QuotationItemForm(forms.ModelForm):
 
 QuotationItemFormSet = inlineformset_factory(
     Quotation, QuotationItem, form=QuotationItemForm,
-    extra=1, can_delete=True, min_num=1, validate_min=True,
+    extra=0, can_delete=True, min_num=1, validate_min=True,
 )
 
 
