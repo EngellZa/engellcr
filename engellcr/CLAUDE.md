@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Django 5 SaaS app: **Cotización Express CR**, a Spanish-language product (deployed at engellcr.com) that lets small businesses in Costa Rica/LatAm register, build a branded business profile, manage clients and products, generate branded PDF quotations, share them by email/WhatsApp, and pay a monthly subscription. Domain language (models, URLs, templates, user-facing text) is Spanish — keep new code consistent with that.
+Django 5 SaaS app: **Cotización Express**, a Spanish-language product (deployed at engellcr.com) that lets small businesses in Costa Rica/LatAm register, build a branded business profile, manage clients and products, generate branded PDF quotations, share them by email/WhatsApp, and pay a monthly subscription. Domain language (models, URLs, templates, user-facing text) is Spanish — keep new code consistent with that.
 
 This repository previously also contained a personal finance tracker (`finanzas_app`); it was deleted at the user's request and the domain now belongs entirely to `cotizador_app`.
 

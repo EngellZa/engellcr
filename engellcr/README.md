@@ -1,4 +1,4 @@
-# 🧾 Cotización Express CR
+# 🧾 Cotización Express
 
 SaaS para pequeños negocios en Costa Rica/LatAm:
 - **Cotizaciones profesionales en PDF** con logo y marca del negocio

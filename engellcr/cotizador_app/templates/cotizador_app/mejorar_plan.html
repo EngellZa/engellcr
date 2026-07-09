@@ -6,7 +6,7 @@
 <div class="row g-3">
   {% for plan in planes %}
   <div class="col-md-4">
-    <div class="card p-4 h-100">
+    <div class="card p-4 h-100" id="plan-{{ plan.code }}" style="scroll-margin-top: 80px;">
       <h5>{{ plan.name }}</h5>
       <div class="display-6 fw-bold">{{ plan.price_crc|moneda }}<span class="fs-6 text-muted">/mes</span></div>
       <div class="text-muted small mb-2">{{ plan.price_usd|moneda:'$' }} USD/mes con PayPal</div>

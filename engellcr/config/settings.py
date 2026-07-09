@@ -118,7 +118,7 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# ── Endurecimiento adicional (Cotización Express CR) ──────────────────────────
+# ── Endurecimiento adicional (Cotización Express) ──────────────────────────
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_REFERRER_POLICY = 'same-origin'
 CSRF_COOKIE_HTTPONLY = True
@@ -133,7 +133,7 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
 
 
-# ── Cache (Cotización Express CR) ──────────────────────────────────────────
+# ── Cache (Cotización Express) ──────────────────────────────────────────
 # Funciona sin Redis (LocMemCache); si REDIS_URL está definida, usa Redis.
 REDIS_URL = config('REDIS_URL', default='')
 if REDIS_URL:
@@ -152,7 +152,7 @@ else:
     }
 
 
-# ── Correo (Cotización Express CR) ─────────────────────────────────────────
+# ── Correo (Cotización Express) ─────────────────────────────────────────
 # Sin EMAIL_HOST configurado, usa el backend de consola (nunca falla, solo imprime).
 EMAIL_HOST = config('EMAIL_HOST', default='')
 if EMAIL_HOST:
@@ -167,7 +167,7 @@ else:
     DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='no-reply@cotizacionexpress.cr')
 
 
-# ── Pagos y contacto (Cotización Express CR) ───────────────────────────────
+# ── Pagos y contacto (Cotización Express) ───────────────────────────────
 TILOPAY_API_KEY = config('TILOPAY_API_KEY', default='')
 TILOPAY_API_SECRET = config('TILOPAY_API_SECRET', default='')
 TILOPAY_MERCHANT_ID = config('TILOPAY_MERCHANT_ID', default='')

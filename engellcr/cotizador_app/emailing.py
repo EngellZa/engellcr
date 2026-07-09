@@ -56,7 +56,7 @@ def send_verification_email(request, user, business=None):
     token = make_verification_token(user.id)
     verify_url = request.build_absolute_uri(reverse('cotizador_app:verificar_correo', args=[token]))
     send_transactional_email(
-        to_email=user.email, subject='Bienvenido a Cotización Express CR — Verificá tu correo',
+        to_email=user.email, subject='Bienvenido a Cotización Express — Verificá tu correo',
         template_name='verifica_correo.html',
         context={'user': user, 'business': business, 'verify_url': verify_url},
         category='email_verification', business=business,

@@ -174,13 +174,13 @@ def _notify_sinpe_decision(receipt, approved, reason=''):
         return
     if approved:
         send_transactional_email(
-            to_email=owner_email, subject='Tu pago fue aprobado — Cotización Express CR',
+            to_email=owner_email, subject='Tu pago fue aprobado — Cotización Express',
             template_name='sinpe_aprobado.html', context={'receipt': receipt},
             category='sinpe_approved', business=receipt.business,
         )
     else:
         send_transactional_email(
-            to_email=owner_email, subject='Tu pago fue rechazado — Cotización Express CR',
+            to_email=owner_email, subject='Tu pago fue rechazado — Cotización Express',
             template_name='sinpe_rechazado.html', context={'receipt': receipt, 'reason': reason},
             category='sinpe_rejected', business=receipt.business,
         )
