@@ -10,12 +10,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Icon font and webfont are visual polish, not layout-critical — loaded non-blocking so
-       they don't delay first paint (falls back to a normal <link> if JS is disabled). -->
-  <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <!-- Google Fonts is visual polish, not layout-critical — loaded non-blocking so it doesn't
+       delay first paint (falls back to a normal <link> if JS is disabled). Icons used to be
+       Bootstrap Icons (a 128 KiB font + 14 KiB CSS for ~12 glyphs); now inline SVG below, so
+       that whole dependency — and its unused-CSS/font-display findings — is gone entirely. -->
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   </noscript>
   <style>
@@ -30,6 +30,7 @@
       --accent-dark: #d97e06;
     }
     * { box-sizing: border-box; }
+    .icon { display: inline-block; width: 1em; height: 1em; vertical-align: -0.125em; fill: currentColor; flex: none; }
     body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--ink); background:#fff; -webkit-font-smoothing: antialiased; }
     h1, h2, h3, h4, h5, .fw-brand { font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
     p { color: var(--ink-soft); }
@@ -44,6 +45,10 @@
     .btn-accent:hover { background: var(--accent-dark); border-color: var(--accent-dark); color: #1a1200; }
     .btn-outline-light2 { border: 1.5px solid rgba(255,255,255,.35); color: #fff; }
     .btn-outline-light2:hover { background: rgba(255,255,255,.1); color: #fff; border-color: #fff; }
+    /* Bootstrap's default outline-secondary (#6c757d) is borderline/failing contrast on
+       these light backgrounds — darker text passes WCAG AA comfortably. */
+    .btn-outline-secondary { color: var(--ink-soft); border-color: #94a3b8; }
+    .btn-outline-secondary:hover { color: #fff; background: var(--ink-soft); border-color: var(--ink-soft); }
 
     /* ── Navbar ── */
     .navbar-cx { background: #fff; border-bottom: 1px solid var(--line); padding: .9rem 0; }
@@ -85,7 +90,7 @@
     .plan-badge { position:absolute; top:-13px; left:50%; transform:translateX(-50%); background: var(--primary); color:#fff; font-size:.7rem; font-weight:700; padding:.25rem .8rem; border-radius:999px; letter-spacing:.04em; }
     .plan-price { font-size: 2.2rem; font-weight: 800; color: var(--ink); }
     .plan-feature { display:flex; align-items:flex-start; gap:.5rem; font-size:.88rem; color: var(--ink-soft); margin-bottom:.5rem; }
-    .plan-feature i { color: var(--primary); margin-top: .15rem; }
+    .plan-feature .icon { color: var(--primary); margin-top: .15rem; }
 
     /* ── FAQ ── */
     .accordion-button { font-weight: 600; color: var(--ink); }
@@ -101,18 +106,21 @@
 
     /* ── Footer ── */
     .footer-cx { background: var(--ink); color: rgba(255,255,255,.8); padding: 3rem 0 1.5rem; font-size:.88rem; }
-    .footer-cx h6 { color:#fff; font-size:.78rem; text-transform:uppercase; letter-spacing:.08em; margin-bottom:1rem; }
+    .footer-cx p { color: rgba(255,255,255,.8); } /* beats the global `p { color: var(--ink-soft) }` rule, which otherwise wins by direct-match even though this is more contextually specific */
+    .footer-cx h3 { color:#fff; font-size:.78rem; text-transform:uppercase; letter-spacing:.08em; margin-bottom:1rem; }
     .footer-cx a { color: rgba(255,255,255,.8); text-decoration:none; }
     .footer-cx a:hover { color:#fff; }
 
     .whatsapp-fab {
+      /* White text on WhatsApp's brand green is only ~2:1 contrast — fails WCAG AA (needs
+         4.5:1). Dark text keeps the recognizable green while passing the contrast check. */
       position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 1000;
-      background: #25D366; color: #fff; border-radius: 50px; padding: .8rem 1.3rem;
+      background: #25D366; color: #04341f; border-radius: 50px; padding: .8rem 1.3rem;
       box-shadow: 0 8px 20px rgba(0,0,0,.25); text-decoration: none; font-weight:600; font-size:.9rem;
     }
     /* ── CTA groups (hero + mid-page + final band) ── */
     .cta-trust { font-size: .85rem; color: rgba(255,255,255,.85); display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; }
-    .cta-trust i { color: #34d399; }
+    .cta-trust .icon { color: #34d399; }
     .cta-clarify { font-size: .78rem; color: rgba(255,255,255,.72); max-width: 520px; }
     .mid-cta { border: 1px solid var(--line); background: var(--surface); border-radius: 20px; padding: 3rem; text-align:center; }
 
@@ -135,6 +143,20 @@
   </style>
 </head>
 <body>
+<svg style="position:absolute; width:0; height:0; overflow:hidden;" aria-hidden="true">
+  <defs>
+    <symbol id="i-stars" viewBox="0 0 16 16"><path d="M8 1a1 1 0 0 1 .967.744l.957 3.71a2.5 2.5 0 0 0 1.622 1.622l3.71.957a1 1 0 0 1 0 1.934l-3.71.957a2.5 2.5 0 0 0-1.622 1.622l-.957 3.71a1 1 0 0 1-1.934 0l-.957-3.71a2.5 2.5 0 0 0-1.622-1.622l-3.71-.957a1 1 0 0 1 0-1.934l3.71-.957A2.5 2.5 0 0 0 6.076 5.454l.957-3.71A1 1 0 0 1 8 1z"/></symbol>
+    <symbol id="i-check-circle-fill" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.061L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></symbol>
+    <symbol id="i-lock-fill" viewBox="0 0 16 16"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 16 16"><path d="M8 .5l6 2.2v4.1c0 4.6-2.8 7.9-6 9.2-3.2-1.3-6-4.6-6-9.2V2.7L8 .5z"/></symbol>
+    <symbol id="i-file" viewBox="0 0 16 16"><path d="M4 1.5A1.5 1.5 0 0 1 5.5 0H9l4 4v10.5A1.5 1.5 0 0 1 11.5 16h-6A1.5 1.5 0 0 1 4 14.5v-13zM9 0v3.5A1.5 1.5 0 0 0 10.5 5H13L9 0z"/></symbol>
+    <symbol id="i-whatsapp" viewBox="0 0 16 16"><path d="M8 0a8 8 0 0 0-6.9 12.03L.3 15.7a.5.5 0 0 0 .61.61l3.68-.8A8 8 0 1 0 8 0zm4.4 11.3c-.2.5-1.04 1-1.44 1.03-.38.03-.77.17-2.6-.6-2.2-.92-3.6-3.14-3.7-3.29-.12-.14-.9-1.2-.9-2.3s.58-1.63.79-1.86c.2-.22.44-.28.6-.28h.4c.13 0 .3-.02.46.36l.68 1.65c.06.14.1.3.02.45l-.3.5c-.08.14-.16.29-.06.46.2.34.7 1.1 1.5 1.7.9.7 1.5.94 1.7 1.03.2.1.32.08.45-.05l.5-.6c.18-.22.4-.18.6-.1l1.5.71c.2.1.33.15.38.24.05.1.05.6-.1 1.05z"/></symbol>
+    <symbol id="i-graph-up" viewBox="0 0 16 16"><path d="M0 14.5a.5.5 0 0 0 .5.5h15a.5.5 0 0 0 0-1H1v-13a.5.5 0 0 0-1 0v13.5zm14.5-13a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V3.707l-4.146 4.147a.5.5 0 0 1-.708 0L6.5 6.207 2.354 10.354a.5.5 0 1 1-.708-.708l4.5-4.5a.5.5 0 0 1 .708 0L9 7.293 13.293 3H10.5a.5.5 0 0 1 0-1h4z"/></symbol>
+    <symbol id="i-lightning-fill" viewBox="0 0 16 16"><path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .39.812l-7 8.5a.5.5 0 0 1-.875-.454L6.633 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/></symbol>
+    <symbol id="i-people-fill" viewBox="0 0 16 16"><path d="M5 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm6 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM2 14c0-2.2 1.8-4 4-4h1c.7 0 1.4.2 2 .5.6-.3 1.3-.5 2-.5h1c2.2 0 4 1.8 4 4v.5H2V14Z"/></symbol>
+    <symbol id="i-eye-slash-fill" viewBox="0 0 16 16"><path d="M8 3C4.5 3 1.7 5.4.5 8c1.2 2.6 4 5 7.5 5s6.3-2.4 7.5-5C14.3 5.4 11.5 3 8 3zm0 8.2A3.2 3.2 0 1 1 8 4.8a3.2 3.2 0 0 1 0 6.4z"/><path d="M1.646 1.646a.5.5 0 0 1 .708 0l12 12a.5.5 0 0 1-.708.708l-12-12a.5.5 0 0 1 0-.708z"/></symbol>
+  </defs>
+</svg>
 
 <nav class="navbar-cx">
   <div class="container d-flex justify-content-between align-items-center">
@@ -151,7 +173,7 @@
   <div class="container">
     <div class="row align-items-center g-5">
       <div class="col-lg-6">
-        <span class="hero-badge"><i class="bi bi-stars"></i> Hecho para pequeños negocios de toda LatAm</span>
+        <span class="hero-badge"><svg class="icon"><use href="#i-stars"/></svg> Hecho para pequeños negocios de toda LatAm</span>
         <h1>Creá y enviá cotizaciones profesionales por WhatsApp</h1>
         <p class="lead mt-3 mb-4">
           Creá cotizaciones en PDF con tu logo, envialas al cliente y da seguimiento sin depender de Excel.
@@ -160,11 +182,11 @@
           <a href="{% url 'cotizador_app:register' %}" class="btn btn-accent btn-lg">Crear mi primera cotización gratis</a>
         </div>
         <div class="cta-trust mt-3">
-          <span><i class="bi bi-check-circle-fill"></i> Gratis para empezar</span>
+          <span><svg class="icon"><use href="#i-check-circle-fill"/></svg> Gratis para empezar</span>
           <span class="text-white-50">·</span>
-          <span><i class="bi bi-check-circle-fill"></i> Sin tarjeta de crédito</span>
+          <span><svg class="icon"><use href="#i-check-circle-fill"/></svg> Sin tarjeta de crédito</span>
           <span class="text-white-50">·</span>
-          <span><i class="bi bi-check-circle-fill"></i> Ideal para técnicos y negocios de servicios</span>
+          <span><svg class="icon"><use href="#i-check-circle-fill"/></svg> Ideal para técnicos y negocios de servicios</span>
         </div>
         <p class="cta-clarify mt-3 mb-0">
           Cotización Express te ayuda a crear y gestionar cotizaciones profesionales. No reemplaza la factura electrónica.
@@ -176,7 +198,7 @@
             <span class="mock-dot" style="background:#ef4444;"></span>
             <span class="mock-dot" style="background:#f59e0b;"></span>
             <span class="mock-dot" style="background:#10b981;"></span>
-            <span class="mock-url"><i class="bi bi-lock-fill" style="font-size:.65rem;"></i> cotizacionexpress.com/panel/cotizaciones/COT-20260805-00012</span>
+            <span class="mock-url"><svg class="icon" style="font-size:.65rem;"><use href="#i-lock-fill"/></svg> cotizacionexpress.com/panel/cotizaciones/COT-20260805-00012</span>
           </div>
           <div class="mock-body">
             <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
@@ -202,7 +224,7 @@
               </tbody>
             </table>
             <div class="d-flex justify-content-between align-items-center pt-2 border-top">
-              <span class="badge" style="background: rgba(16,185,129,.12); color:#0d9668; font-weight:600;"><i class="bi bi-check-circle-fill"></i> Aprobada por el cliente</span>
+              <span class="badge" style="background: rgba(16,185,129,.12); color:#0d9668; font-weight:600;"><svg class="icon"><use href="#i-check-circle-fill"/></svg> Aprobada por el cliente</span>
               <div class="fw-bold fs-5" style="color:var(--primary);">$825</div>
             </div>
           </div>
@@ -214,10 +236,10 @@
 
 <div class="trust-bar">
   <div class="container d-flex flex-wrap justify-content-center gap-4 text-center">
-    <span><i class="bi bi-shield-check"></i> Comprobantes almacenados de forma privada</span>
-    <span><i class="bi bi-file-earmark-pdf"></i> PDF con tu marca</span>
-    <span><i class="bi bi-whatsapp"></i> Compartí en un clic</span>
-    <span><i class="bi bi-graph-up-arrow"></i> Seguimiento de aprobación</span>
+    <span><svg class="icon"><use href="#i-shield"/></svg> Comprobantes almacenados de forma privada</span>
+    <span><svg class="icon"><use href="#i-file"/></svg> PDF con tu marca</span>
+    <span><svg class="icon"><use href="#i-whatsapp"/></svg> Compartí en un clic</span>
+    <span><svg class="icon"><use href="#i-graph-up"/></svg> Seguimiento de aprobación</span>
   </div>
 </div>
 
@@ -230,28 +252,28 @@
     <div class="row g-4">
       <div class="col-md-3 col-sm-6">
         <div class="feature-card">
-          <div class="feature-icon"><i class="bi bi-lightning-charge-fill"></i></div>
+          <div class="feature-icon"><svg class="icon"><use href="#i-lightning-fill"/></svg></div>
           <h3 class="fs-6">Rápido</h3>
           <p class="small mb-0">Armá una cotización profesional en minutos, no en horas.</p>
         </div>
       </div>
       <div class="col-md-3 col-sm-6">
         <div class="feature-card">
-          <div class="feature-icon"><i class="bi bi-file-earmark-pdf-fill"></i></div>
+          <div class="feature-icon"><svg class="icon"><use href="#i-file"/></svg></div>
           <h3 class="fs-6">PDF con tu marca</h3>
           <p class="small mb-0">Logo, colores y datos de tu negocio en cada documento.</p>
         </div>
       </div>
       <div class="col-md-3 col-sm-6">
         <div class="feature-card">
-          <div class="feature-icon"><i class="bi bi-whatsapp"></i></div>
+          <div class="feature-icon"><svg class="icon"><use href="#i-whatsapp"/></svg></div>
           <h3 class="fs-6">Compartí fácil</h3>
           <p class="small mb-0">Enviá por correo o WhatsApp con un solo clic.</p>
         </div>
       </div>
       <div class="col-md-3 col-sm-6">
         <div class="feature-card">
-          <div class="feature-icon"><i class="bi bi-people-fill"></i></div>
+          <div class="feature-icon"><svg class="icon"><use href="#i-people-fill"/></svg></div>
           <h3 class="fs-6">Clientes organizados</h3>
           <p class="small mb-0">Olvidate del Excel: todo tu negocio en un solo lugar.</p>
         </div>
@@ -295,15 +317,15 @@
           {% endif %}
           <div class="flex-grow-1 mt-3">
             {% if plan.monthly_quote_limit %}
-              <div class="plan-feature"><i class="bi bi-check-circle-fill"></i> {{ plan.monthly_quote_limit }} cotizaciones/mes</div>
+              <div class="plan-feature"><svg class="icon"><use href="#i-check-circle-fill"/></svg> {{ plan.monthly_quote_limit }} cotizaciones/mes</div>
             {% elif plan.code == 'free_trial' %}
-              <div class="plan-feature"><i class="bi bi-check-circle-fill"></i> 3 cotizaciones totales</div>
-              <div class="plan-feature"><i class="bi bi-check-circle-fill"></i> Sin tarjeta requerida</div>
+              <div class="plan-feature"><svg class="icon"><use href="#i-check-circle-fill"/></svg> 3 cotizaciones totales</div>
+              <div class="plan-feature"><svg class="icon"><use href="#i-check-circle-fill"/></svg> Sin tarjeta requerida</div>
             {% else %}
-              <div class="plan-feature"><i class="bi bi-check-circle-fill"></i> Cotizaciones ilimitadas</div>
+              <div class="plan-feature"><svg class="icon"><use href="#i-check-circle-fill"/></svg> Cotizaciones ilimitadas</div>
             {% endif %}
-            <div class="plan-feature"><i class="bi bi-check-circle-fill"></i> PDF profesional con tu marca</div>
-            <div class="plan-feature"><i class="bi bi-check-circle-fill"></i> Envío por correo y WhatsApp</div>
+            <div class="plan-feature"><svg class="icon"><use href="#i-check-circle-fill"/></svg> PDF profesional con tu marca</div>
+            <div class="plan-feature"><svg class="icon"><use href="#i-check-circle-fill"/></svg> Envío por correo y WhatsApp</div>
           </div>
           <a href="{% url 'cotizador_app:register' %}" class="btn {% if plan.code == 'pro' %}btn-primary{% else %}btn-outline-secondary{% endif %} w-100 mt-3">
             {% if plan.code == 'free_trial' %}Probar gratis{% else %}Elegir plan{% endif %}
@@ -347,19 +369,19 @@
     <div class="row g-4">
       <div class="col-md-4">
         <div class="security-item">
-          <div class="security-icon"><i class="bi bi-shield-lock-fill"></i></div>
+          <div class="security-icon"><svg class="icon"><use href="#i-shield"/></svg></div>
           <div><h3 class="fs-6 mb-1">Datos aislados por negocio</h3><p class="small mb-0">Cada cuenta solo accede a su propia información.</p></div>
         </div>
       </div>
       <div class="col-md-4">
         <div class="security-item">
-          <div class="security-icon"><i class="bi bi-eye-slash-fill"></i></div>
+          <div class="security-icon"><svg class="icon"><use href="#i-eye-slash-fill"/></svg></div>
           <div><h3 class="fs-6 mb-1">Comprobantes privados</h3><p class="small mb-0">Los pagos SINPE se guardan de forma privada, nunca públicos.</p></div>
         </div>
       </div>
       <div class="col-md-4">
         <div class="security-item">
-          <div class="security-icon"><i class="bi bi-lock-fill"></i></div>
+          <div class="security-icon"><svg class="icon"><use href="#i-lock-fill"/></svg></div>
           <div><h3 class="fs-6 mb-1">Conexión cifrada</h3><p class="small mb-0">Toda la plataforma corre sobre HTTPS.</p></div>
         </div>
       </div>
@@ -386,7 +408,7 @@
         <p class="small mb-0">Un producto de Engell CR — cotizaciones profesionales para pequeños negocios de toda LatAm.</p>
       </div>
       <div class="col-md-2 col-6">
-        <h6>Producto</h6>
+        <h3>Producto</h3>
         <div class="d-flex flex-column gap-2">
           <a href="#planes">Planes</a>
           <a href="{% url 'cotizador_app:register' %}">Crear cuenta</a>
@@ -394,15 +416,15 @@
         </div>
       </div>
       <div class="col-md-3 col-6">
-        <h6>Legal</h6>
+        <h3>Legal</h3>
         <div class="d-flex flex-column gap-2">
           <a href="#">Política de privacidad</a>
           <a href="#">Términos y condiciones</a>
         </div>
       </div>
       <div class="col-md-3">
-        <h6>Contacto</h6>
-        {% if WHATSAPP_CONTACT_NUMBER %}<a href="https://wa.me/{{ WHATSAPP_CONTACT_NUMBER }}" target="_blank" class="d-block mb-2"><i class="bi bi-whatsapp"></i> WhatsApp</a>{% endif %}
+        <h3>Contacto</h3>
+        {% if WHATSAPP_CONTACT_NUMBER %}<a href="https://wa.me/{{ WHATSAPP_CONTACT_NUMBER }}" target="_blank" class="d-block mb-2"><svg class="icon"><use href="#i-whatsapp"/></svg> WhatsApp</a>{% endif %}
       </div>
     </div>
     <hr class="my-4" style="border-color: rgba(255,255,255,.12);">
@@ -412,7 +434,7 @@
 
 {% if WHATSAPP_CONTACT_NUMBER %}
 <a href="https://wa.me/{{ WHATSAPP_CONTACT_NUMBER }}" target="_blank" class="whatsapp-fab">
-  <i class="bi bi-whatsapp"></i> Hablar por WhatsApp
+  <svg class="icon"><use href="#i-whatsapp"/></svg> Hablar por WhatsApp
 </a>
 {% endif %}
 
