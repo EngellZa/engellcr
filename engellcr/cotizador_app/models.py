@@ -100,6 +100,7 @@ class Business(models.Model):
     sinpe_number = models.CharField('Número SINPE Móvil', max_length=20, blank=True)
     sinpe_account_holder = models.CharField('Titular de la cuenta SINPE', max_length=150, blank=True)
     next_quote_number = models.PositiveIntegerField(default=1)
+    quote_number_reset_date = models.DateField(null=True, blank=True)
     is_deleted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

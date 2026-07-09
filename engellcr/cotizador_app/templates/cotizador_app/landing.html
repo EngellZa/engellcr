@@ -82,10 +82,6 @@
     .accordion-button:not(.collapsed) { background: rgba(13,92,79,.06); color: var(--primary); box-shadow:none; }
     .accordion-button:focus { box-shadow: none; }
 
-    /* ── Testimonials ── */
-    .testimonial-card { border: 1px solid var(--line); border-radius: 14px; padding: 1.6rem; background: #fff; height: 100%; }
-    .avatar-circle { width:42px; height:42px; border-radius:50%; background: var(--surface); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-weight:700; color: var(--primary); }
-
     /* ── Security ── */
     .security-item { display:flex; gap:1rem; align-items:flex-start; }
     .security-icon { width:40px; height:40px; flex:none; border-radius:10px; background: rgba(13,92,79,.08); color:var(--primary); display:flex; align-items:center; justify-content:center; }
@@ -144,18 +140,13 @@
   <div class="container">
     <div class="row align-items-center g-5">
       <div class="col-lg-6">
-        <span class="hero-badge"><i class="bi bi-stars"></i> Hecho para negocios de Costa Rica — listo para crecer a LatAm</span>
-        <h1>Cotizaciones profesionales por WhatsApp para pequeños negocios</h1>
+        <span class="hero-badge"><i class="bi bi-stars"></i> Hecho para pequeños negocios de toda LatAm</span>
+        <h1>Creá y enviá cotizaciones profesionales por WhatsApp</h1>
         <p class="lead mt-3 mb-4">
           Creá cotizaciones en PDF con tu logo, envialas al cliente y da seguimiento sin depender de Excel.
         </p>
         <div class="d-flex flex-wrap gap-2 cta-buttons">
           <a href="{% url 'cotizador_app:register' %}" class="btn btn-accent btn-lg">Crear mi primera cotización gratis</a>
-          {% if WHATSAPP_CONTACT_NUMBER %}
-          <a href="https://wa.me/{{ WHATSAPP_CONTACT_NUMBER }}?text=Hola%2C%20quiero%20ver%20una%20demo%20de%20Cotizaci%C3%B3n%20Express" target="_blank" class="btn btn-outline-light2 btn-lg"><i class="bi bi-whatsapp"></i> Solicitar demo por WhatsApp</a>
-          {% else %}
-          <a href="#planes" class="btn btn-outline-light2 btn-lg">Ver planes</a>
-          {% endif %}
         </div>
         <div class="cta-trust mt-3">
           <span><i class="bi bi-check-circle-fill"></i> Gratis para empezar</span>
@@ -174,7 +165,7 @@
             <span class="mock-dot" style="background:#ef4444;"></span>
             <span class="mock-dot" style="background:#f59e0b;"></span>
             <span class="mock-dot" style="background:#10b981;"></span>
-            <span class="mock-url"><i class="bi bi-lock-fill" style="font-size:.65rem;"></i> cotizacionexpress.com/panel/cotizaciones/COT-0142</span>
+            <span class="mock-url"><i class="bi bi-lock-fill" style="font-size:.65rem;"></i> cotizacionexpress.com/panel/cotizaciones/COT-20260805-00012</span>
           </div>
           <div class="mock-body">
             <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
@@ -186,7 +177,7 @@
                 </div>
               </div>
               <div class="text-end">
-                <div class="fw-bold" style="color:var(--primary);">COT-0142</div>
+                <div class="fw-bold" style="color:var(--primary);">COT-20260805-00012</div>
                 <div class="text-muted" style="font-size:.72rem;">Válida hasta 15/08/2026</div>
               </div>
             </div>
@@ -313,44 +304,6 @@
   </div>
 </section>
 
-<section class="section">
-  <div class="container">
-    <div class="text-center mb-5">
-      <div class="eyebrow mb-2">Confían en nosotros</div>
-      <h2>Lo que dicen nuestros clientes</h2>
-    </div>
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="testimonial-card">
-          <p class="fst-italic mb-3">"Dejé de perder cotizaciones en carpetas de Excel. Ahora todo queda en un solo lugar y se ve mucho más profesional."</p>
-          <div class="d-flex align-items-center gap-2">
-            <div class="avatar-circle">—</div>
-            <div><div class="fw-semibold small">Próximamente</div><div class="text-muted" style="font-size:.75rem;">Testimonio de cliente</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="testimonial-card">
-          <p class="fst-italic mb-3">"El enlace público para que el cliente apruebe la cotización nos ahorra un montón de idas y vueltas por correo."</p>
-          <div class="d-flex align-items-center gap-2">
-            <div class="avatar-circle">—</div>
-            <div><div class="fw-semibold small">Próximamente</div><div class="text-muted" style="font-size:.75rem;">Testimonio de cliente</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="testimonial-card">
-          <p class="fst-italic mb-3">"Configurar mi negocio tomó cinco minutos y ya tenía mi primera cotización enviada por WhatsApp."</p>
-          <div class="d-flex align-items-center gap-2">
-            <div class="avatar-circle">—</div>
-            <div><div class="fw-semibold small">Próximamente</div><div class="text-muted" style="font-size:.75rem;">Testimonio de cliente</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section class="section" style="background: var(--surface);">
   <div class="container" style="max-width: 720px;">
     <div class="text-center mb-5">
@@ -418,7 +371,7 @@
     <div class="row g-4">
       <div class="col-md-4">
         <div class="text-white fw-bold mb-2">🧾 Cotización Express</div>
-        <p class="small mb-0">Un producto de Engell CR — cotizaciones profesionales para pequeños negocios de Costa Rica y LatAm.</p>
+        <p class="small mb-0">Un producto de Engell CR — cotizaciones profesionales para pequeños negocios de toda LatAm.</p>
       </div>
       <div class="col-md-2 col-6">
         <h6>Producto</h6>

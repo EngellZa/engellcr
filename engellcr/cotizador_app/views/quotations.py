@@ -78,7 +78,7 @@ def cotizacion_crear(request):
             'issue_date': today, 'valid_until': today + timedelta(days=3),
             'currency': request.business.currency,
             'notes': 'Gracias por su interés en nuestros productos y servicios.',
-            'terms': 'Cotización válida por el plazo indicado arriba. Precios sujetos a cambios sin previo aviso.',
+            'terms': 'Esta cotización es válida hasta la fecha de vencimiento indicada. Precios sujetos a cambios sin previo aviso.',
         }
         cliente_id = request.GET.get('cliente')
         if cliente_id and cliente_id.isdigit():

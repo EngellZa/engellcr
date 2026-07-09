@@ -71,11 +71,17 @@ def recalculate_totals(quotation):
 
 @transaction.atomic
 def next_quote_number(business_id):
+    """Formats COT-YYYYMMDD-00001, with the 5-digit counter resetting to 1 each
+    time the calendar date (at generation time) rolls over from the last one issued."""
+    today = timezone.localdate()
     business = Business.objects.select_for_update().get(pk=business_id)
+    if business.quote_number_reset_date != today:
+        business.next_quote_number = 1
+        business.quote_number_reset_date = today
     n = business.next_quote_number
     business.next_quote_number = n + 1
-    business.save(update_fields=['next_quote_number'])
-    return f'COT-{n:04d}'
+    business.save(update_fields=['next_quote_number', 'quote_number_reset_date'])
+    return f'COT-{today:%Y%m%d}-{n:05d}'
 
 
 @transaction.atomic
