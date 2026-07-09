@@ -8,7 +8,7 @@
     <div class="card p-3">
       <h6 class="text-muted small">Datos del negocio</h6>
       <p class="mb-1"><strong>Dueño:</strong> {{ business.owner.email }}</p>
-      <p class="mb-1"><strong>Cédula:</strong> {{ business.legal_id|default:"—" }}</p>
+      <p class="mb-1"><strong>Cédula / ID fiscal:</strong> {{ business.legal_id|default:"—" }}</p>
       <p class="mb-1"><strong>Teléfono:</strong> {{ business.phone|default:"—" }}</p>
       <p class="mb-1"><strong>Cotizaciones:</strong> {{ quotations_count }}</p>
     </div>

@@ -30,7 +30,7 @@
     <div>
       {% if quotation.business.logo %}<img class="logo" src="{{ quotation.business.logo.url }}">{% endif %}
       <div class="business-name">{{ quotation.business.name }}</div>
-      {% if quotation.business.legal_id %}<div>Cédula: {{ quotation.business.legal_id }}</div>{% endif %}
+      {% if quotation.business.legal_id %}<div>Cédula / ID fiscal: {{ quotation.business.legal_id }}</div>{% endif %}
       {% if quotation.business.email %}<div>{{ quotation.business.email }}</div>{% endif %}
       {% if quotation.business.phone %}<div>{{ quotation.business.phone }}</div>{% endif %}
       {% if quotation.business.address %}<div>{{ quotation.business.address }}</div>{% endif %}

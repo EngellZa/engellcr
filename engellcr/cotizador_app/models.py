@@ -89,7 +89,7 @@ class UserProfile(models.Model):
 class Business(models.Model):
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='business')
     name = models.CharField('Nombre del negocio', max_length=150)
-    legal_id = models.CharField('Cédula jurídica', max_length=30, blank=True)
+    legal_id = models.CharField('Cédula jurídica / ID fiscal', max_length=30, blank=True)
     email = models.EmailField('Correo de contacto', blank=True)
     phone = models.CharField('Teléfono', max_length=20, blank=True)
     address = models.TextField('Dirección', blank=True)
