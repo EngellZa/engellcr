@@ -27,15 +27,18 @@ def read_verification_token(token):
     return data.get('uid')
 
 
-def send_transactional_email(to_email, subject, template_name, context, category, business=None):
+def send_transactional_email(to_email, subject, template_name, context, category, business=None, attachments=None):
     """Renders an HTML template and sends it. Never raises — email failures must not break the
-    calling flow (e.g. a SINPE approval should still succeed even if SMTP is down). Always logs."""
+    calling flow (e.g. a SINPE approval should still succeed even if SMTP is down). Always logs.
+    `attachments` is an optional list of (filename, content_bytes, mimetype) tuples."""
     status = EmailLog.SENT
     error_message = ''
     try:
         html_body = render_to_string(f'cotizador_app/emails/{template_name}', context)
         msg = EmailMultiAlternatives(subject=subject, body=html_body, to=[to_email])
         msg.attach_alternative(html_body, 'text/html')
+        for filename, content, mimetype in (attachments or []):
+            msg.attach(filename, content, mimetype)
         msg.send(fail_silently=False)
     except Exception as exc:
         status = EmailLog.FAILED

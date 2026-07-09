@@ -179,3 +179,18 @@ class SinpeReceiptForm(forms.Form):
         self.cleaned_data['mime_type'] = mime_type
         self.cleaned_data['resource_type'] = resource_type
         return file
+
+
+class PurchaseOrderUploadForm(forms.Form):
+    archivo = forms.FileField(
+        label='Orden de compra',
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'image/*,.pdf'}),
+    )
+
+    def clean_archivo(self):
+        from .validators import validate_receipt_file
+        file = self.cleaned_data['archivo']
+        mime_type, resource_type = validate_receipt_file(file)
+        self.cleaned_data['mime_type'] = mime_type
+        self.cleaned_data['resource_type'] = resource_type
+        return file

@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Q
-from django.http import FileResponse
+from django.http import FileResponse, Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
@@ -143,8 +143,12 @@ def cotizacion_detalle(request, pk):
         pk=pk, business=request.business,
     )
     share_link = QuotationShareLink.objects.filter(quotation=quotation).first()
-    share_url = request.build_absolute_uri(reverse('public_quote_view', args=[share_link.token])) if share_link else ''
-    whatsapp_text = f'Hola {quotation.client.name}, te comparto la cotización {quotation.quote_number} de {request.business.name}: {share_url}'
+    share_url = ''
+    whatsapp_text = ''
+    if share_link and share_link.is_valid:
+        share_url = request.build_absolute_uri(reverse('public_quote_view', args=[share_link.token]))
+        whatsapp_text = (f'Hola {quotation.client.name}, te comparto la cotización '
+                          f'{quotation.quote_number} de {request.business.name}: {share_url}')
     return render(request, 'cotizador_app/cotizacion_detalle.html', {
         'quotation': quotation, 'share_link': share_link, 'share_url': share_url,
         'whatsapp_text': whatsapp_text,
@@ -189,6 +193,19 @@ def cotizacion_pdf(request, pk):
 
 
 @business_required
+def cotizacion_orden_compra(request, pk):
+    """Never a stored public URL — generates a short-lived signed Cloudinary URL on demand,
+    same private-file pattern as SINPE receipts."""
+    quotation = get_object_or_404(Quotation, pk=pk, business=request.business)
+    share_link = get_object_or_404(QuotationShareLink, quotation=quotation)
+    if not share_link.has_purchase_order:
+        raise Http404
+    from ..storage_sinpe import get_signed_url
+    url = get_signed_url(share_link.purchase_order_public_id, share_link.purchase_order_resource_type)
+    return redirect(url)
+
+
+@business_required
 @rate_limit('cotizacion_enviar', limit=20, window_seconds=3600, key_kind='user')
 def cotizacion_enviar(request, pk):
     quotation = get_object_or_404(Quotation.objects.select_related('client'), pk=pk, business=request.business)
@@ -197,6 +214,9 @@ def cotizacion_enviar(request, pk):
         return redirect('cotizador_app:cotizacion_detalle', pk=pk)
 
     pdf_file = get_or_generate_pdf(quotation)
+    pdf_file.open('rb')
+    pdf_bytes = pdf_file.read()
+    pdf_file.close()
     share_link, _ = QuotationShareLink.objects.get_or_create(quotation=quotation)
     share_url = request.build_absolute_uri(reverse('public_quote_view', args=[share_link.token]))
 
@@ -206,6 +226,7 @@ def cotizacion_enviar(request, pk):
         template_name='cotizacion_compartida.html',
         context={'quotation': quotation, 'business': request.business, 'share_url': share_url},
         category='quotation_share', business=request.business,
+        attachments=[(f'{quotation.quote_number}.pdf', pdf_bytes, 'application/pdf')],
     )
     if sent and quotation.status == Quotation.STATUS_DRAFT:
         quotation.status = Quotation.STATUS_SENT
@@ -239,4 +260,9 @@ def cotizacion_compartir(request, pk):
             quotation.status = Quotation.STATUS_SENT
             quotation.save(update_fields=['status'])
             invalidate_dashboard_cache(request.business.id)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            share_url = request.build_absolute_uri(reverse('public_quote_view', args=[share_link.token]))
+            whatsapp_text = (f'Hola {quotation.client.name}, te comparto la cotización '
+                              f'{quotation.quote_number} de {request.business.name}: {share_url}')
+            return JsonResponse({'share_url': share_url, 'whatsapp_text': whatsapp_text})
     return redirect('cotizador_app:cotizacion_detalle', pk=pk)

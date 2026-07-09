@@ -22,9 +22,14 @@
       <button type="submit" class="btn btn-outline-secondary btn-sm"><i class="bi bi-envelope"></i> Enviar por correo</button>
     </form>
     {% endif %}
-    {% if share_url %}
-    <a href="https://wa.me/?text={{ whatsapp_text|urlencode }}" target="_blank" class="btn btn-success btn-sm"><i class="bi bi-whatsapp"></i> WhatsApp</a>
-    {% endif %}
+    <button type="button" id="btn-whatsapp-share" class="btn btn-success btn-sm"
+            data-share-url="{{ share_url }}" data-whatsapp-text="{{ whatsapp_text }}"
+            data-share-action="{% if share_link %}activar{% else %}rotar{% endif %}"
+            data-compartir-url="{% url 'cotizador_app:cotizacion_compartir' quotation.pk %}"
+            data-pdf-url="{% url 'cotizador_app:cotizacion_pdf' quotation.pk %}"
+            title="Descarga el PDF y abre WhatsApp con el enlace listo para enviar">
+      <i class="bi bi-whatsapp"></i> WhatsApp
+    </button>
   </div>
 </div>
 
@@ -50,6 +55,11 @@
       {% csrf_token %}<input type="hidden" name="action" value="{% if share_link %}activar{% else %}rotar{% endif %}">
       <button type="submit" class="btn btn-primary btn-sm">{% if share_link %}Reactivar enlace{% else %}Generar enlace público{% endif %}</button>
     </form>
+  {% endif %}
+  {% if share_link.has_purchase_order %}
+    <hr>
+    <p class="mb-1"><i class="bi bi-paperclip"></i> El cliente subió una orden de compra{% if share_link.purchase_order_uploaded_at %} el {{ share_link.purchase_order_uploaded_at|date:"d/m/Y H:i" }}{% endif %}.</p>
+    <a href="{% url 'cotizador_app:cotizacion_orden_compra' quotation.pk %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-download"></i> Ver orden de compra</a>
   {% endif %}
 </div>
 
@@ -80,4 +90,45 @@
   {% if quotation.notes %}<p class="text-muted small">{{ quotation.notes }}</p>{% endif %}
   {% if quotation.terms %}<p class="text-muted small"><strong>Términos:</strong> {{ quotation.terms }}</p>{% endif %}
 </div>
+{% endblock %}
+{% block extra_js %}
+<script>
+(function () {
+  var btn = document.getElementById('btn-whatsapp-share');
+  if (!btn) return;
+
+  // wa.me links can only pre-fill text, never attach a file — WhatsApp's click-to-chat
+  // has no such API. Best we can do from a plain link is trigger the PDF download
+  // alongside opening the chat, so the user just needs to attach it manually.
+  function triggerPdfDownload() {
+    var iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = btn.dataset.pdfUrl;
+    document.body.appendChild(iframe);
+  }
+
+  btn.addEventListener('click', function () {
+    if (btn.dataset.shareUrl) {
+      triggerPdfDownload();
+      window.open('https://wa.me/?text=' + encodeURIComponent(btn.dataset.whatsappText), '_blank');
+      return;
+    }
+    btn.disabled = true;
+    var formData = new FormData();
+    formData.append('action', btn.dataset.shareAction);
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+    fetch(btn.dataset.compartirUrl, {
+      method: 'POST', body: formData, headers: {'X-Requested-With': 'XMLHttpRequest'},
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        btn.dataset.shareUrl = data.share_url;
+        btn.dataset.whatsappText = data.whatsapp_text;
+        triggerPdfDownload();
+        window.open('https://wa.me/?text=' + encodeURIComponent(data.whatsapp_text), '_blank');
+      })
+      .finally(function () { btn.disabled = false; });
+  });
+})();
+</script>
 {% endblock %}

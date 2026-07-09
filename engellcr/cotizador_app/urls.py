@@ -61,6 +61,7 @@ urlpatterns = [
     path('panel/cotizaciones/<int:pk>/pdf/', quotations.cotizacion_pdf, name='cotizacion_pdf'),
     path('panel/cotizaciones/<int:pk>/enviar/', quotations.cotizacion_enviar, name='cotizacion_enviar'),
     path('panel/cotizaciones/<int:pk>/compartir/', quotations.cotizacion_compartir, name='cotizacion_compartir'),
+    path('panel/cotizaciones/<int:pk>/orden-compra/', quotations.cotizacion_orden_compra, name='cotizacion_orden_compra'),
 
     # Plan y pagos
     path('panel/plan/', billing.plan_actual, name='plan_actual'),

@@ -2,8 +2,10 @@ from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
+from ..forms import PurchaseOrderUploadForm
 from ..models import QuotationShareLink, Quotation
 from ..ratelimit import rate_limit
+from ..storage_sinpe import upload_purchase_order
 from ..cache import cx_get, cx_set, cx_delete, public_quote_key
 
 
@@ -96,4 +98,29 @@ def public_quote_reject(request, token):
     link.quotation.save(update_fields=['status'])
     _invalidate_quote_cache(token)  # status changed — cached snapshot is now stale
     messages.success(request, 'Marcaste la cotización como rechazada.')
+    return redirect('public_quote_view', token=token)
+
+
+@rate_limit('public_quote_subir_orden', limit=5, window_seconds=3600, key_kind='ip')
+def public_quote_subir_orden(request, token):
+    link = _get_valid_link_or_404(token)
+    if link is None or request.method != 'POST':
+        return render(request, 'cotizador_app/public_quote_unavailable.html', status=404)
+    form = PurchaseOrderUploadForm(request.POST, request.FILES)
+    if form.is_valid():
+        file = form.cleaned_data['archivo']
+        resource_type = form.cleaned_data['resource_type']
+        public_id = upload_purchase_order(file, link.quotation.business_id, resource_type)
+        link.purchase_order_public_id = public_id
+        link.purchase_order_resource_type = resource_type
+        link.purchase_order_mime_type = form.cleaned_data['mime_type']
+        link.purchase_order_file_size = file.size
+        link.purchase_order_uploaded_at = timezone.now()
+        link.save(update_fields=[
+            'purchase_order_public_id', 'purchase_order_resource_type', 'purchase_order_mime_type',
+            'purchase_order_file_size', 'purchase_order_uploaded_at',
+        ])
+        messages.success(request, 'Orden de compra recibida. ¡Gracias!')
+    else:
+        messages.error(request, 'No se pudo subir el archivo: revisá que sea una imagen (JPG, PNG, WEBP) o PDF de máximo 5 MB.')
     return redirect('public_quote_view', token=token)

@@ -271,6 +271,11 @@ class QuotationShareLink(models.Model):
     approved_at = models.DateTimeField(null=True, blank=True)
     rejected_at = models.DateTimeField(null=True, blank=True)
     rejection_reason = models.CharField(max_length=255, blank=True)
+    purchase_order_public_id = models.CharField(max_length=200, blank=True)
+    purchase_order_resource_type = models.CharField(max_length=10, blank=True)
+    purchase_order_mime_type = models.CharField(max_length=50, blank=True)
+    purchase_order_file_size = models.PositiveIntegerField(null=True, blank=True)
+    purchase_order_uploaded_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -293,11 +298,20 @@ class QuotationShareLink(models.Model):
         self.approved_at = None
         self.rejected_at = None
         self.rejection_reason = ''
+        self.purchase_order_public_id = ''
+        self.purchase_order_resource_type = ''
+        self.purchase_order_mime_type = ''
+        self.purchase_order_file_size = None
+        self.purchase_order_uploaded_at = None
         self.save()
 
     @property
     def is_expired(self):
         return bool(self.expires_at and self.expires_at < timezone.now())
+
+    @property
+    def has_purchase_order(self):
+        return bool(self.purchase_order_public_id)
 
     @property
     def is_valid(self):
