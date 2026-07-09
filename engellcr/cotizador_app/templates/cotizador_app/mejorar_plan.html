@@ -2,17 +2,44 @@
 {% load cotizador_tags %}
 {% block title %}Mejorar Plan{% endblock %}
 {% block page_title %}Mejorar Plan{% endblock %}
+{% block extra_css %}
+<style>
+  .plan-card { border: 1px solid var(--bs-border-color, #e2e8f0); border-radius: 14px; padding: 1.6rem; height: 100%; display: flex; flex-direction: column; position: relative; background: var(--bs-card-bg, #fff); }
+  .plan-card.featured { border: 2px solid var(--primary); box-shadow: 0 16px 32px -16px rgba(13,110,95,.22); }
+  .plan-card.current { border-color: var(--accent); }
+  .plan-badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #fff; font-size: .68rem; font-weight: 700; padding: .25rem .75rem; border-radius: 999px; letter-spacing: .04em; white-space: nowrap; }
+  .plan-badge.current-badge { background: var(--accent); color: #1a1200; }
+  .plan-name { font-weight: 600; text-transform: uppercase; font-size: .78rem; letter-spacing: .03em; color: var(--bs-secondary-color, #6c757d); margin-bottom: .4rem; }
+  .plan-price { font-size: 2rem; font-weight: 800; }
+  .plan-price-usd { font-size: .8rem; color: var(--bs-secondary-color, #6c757d); margin-bottom: .9rem; }
+  .plan-feature { display: flex; align-items: flex-start; gap: .5rem; font-size: .85rem; color: var(--bs-secondary-color, #6c757d); margin-bottom: .5rem; }
+  .plan-feature i { color: var(--primary); margin-top: .15rem; }
+</style>
+{% endblock %}
 {% block content %}
-<div class="row g-3">
+<div class="row g-4">
   {% for plan in planes %}
   <div class="col-md-4">
-    <div class="card p-4 h-100" id="plan-{{ plan.code }}" style="scroll-margin-top: 80px;">
-      <h5>{{ plan.name }}</h5>
-      <div class="display-6 fw-bold">{{ plan.price_crc|moneda }}<span class="fs-6 text-muted">/mes</span></div>
-      <div class="text-muted small mb-2">{{ plan.price_usd|moneda:'$' }} USD/mes con PayPal</div>
-      <p class="text-muted small">{% if plan.monthly_quote_limit %}{{ plan.monthly_quote_limit }} cotizaciones/mes{% else %}Cotizaciones ilimitadas{% endif %}</p>
-      <div class="mt-auto d-grid gap-2">
-        <a href="{% url 'cotizador_app:pago_iniciar' plan.id 'sinpe' %}" class="btn btn-primary btn-sm">Pagar por SINPE Móvil</a>
+    <div class="plan-card {% if plan.code == 'pro' %}featured{% endif %}{% if subscription.plan_id == plan.id %} current{% endif %}" id="plan-{{ plan.code }}" style="scroll-margin-top: 80px;">
+      {% if subscription.plan_id == plan.id %}
+        <span class="plan-badge current-badge">TU PLAN</span>
+      {% elif plan.code == 'pro' %}
+        <span class="plan-badge">MÁS POPULAR</span>
+      {% endif %}
+      <div class="plan-name">{{ plan.name }}</div>
+      <div class="plan-price mb-1">₡{{ plan.price_crc|numero:0 }}<span class="fs-6 fw-normal text-muted">/mes</span></div>
+      <div class="plan-price-usd">o ${{ plan.price_usd|numero:0 }} USD/mes con PayPal</div>
+      <div class="flex-grow-1">
+        {% if plan.monthly_quote_limit %}
+          <div class="plan-feature"><i class="bi bi-check-circle-fill"></i> {{ plan.monthly_quote_limit }} cotizaciones/mes</div>
+        {% else %}
+          <div class="plan-feature"><i class="bi bi-check-circle-fill"></i> Cotizaciones ilimitadas</div>
+        {% endif %}
+        <div class="plan-feature"><i class="bi bi-check-circle-fill"></i> PDF profesional con tu marca</div>
+        <div class="plan-feature"><i class="bi bi-check-circle-fill"></i> Envío por correo y WhatsApp</div>
+      </div>
+      <div class="d-grid gap-2 mt-3">
+        <a href="{% url 'cotizador_app:pago_iniciar' plan.id 'sinpe' %}" class="btn {% if plan.code == 'pro' %}btn-primary{% else %}btn-outline-secondary{% endif %} btn-sm">Pagar por SINPE Móvil</a>
         <a href="{% url 'cotizador_app:pago_iniciar' plan.id 'tilopay' %}" class="btn btn-outline-secondary btn-sm">Pagar con Tilopay</a>
         <a href="{% url 'cotizador_app:pago_iniciar' plan.id 'paypal' %}" class="btn btn-outline-secondary btn-sm">Pagar con PayPal (USD)</a>
       </div>

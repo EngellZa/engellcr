@@ -22,7 +22,11 @@ def plan_actual(request):
 @business_required
 def plan_mejorar(request):
     planes = SubscriptionPlan.objects.filter(is_active=True).exclude(code=SubscriptionPlan.FREE_TRIAL)
-    return render(request, 'cotizador_app/mejorar_plan.html', {'planes': planes})
+    context = {
+        'planes': planes,
+        'subscription': request.business.current_subscription,
+    }
+    return render(request, 'cotizador_app/mejorar_plan.html', context)
 
 
 @business_required
