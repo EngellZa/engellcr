@@ -41,6 +41,8 @@ urlpatterns = [
     # Clientes
     path('panel/clientes/', clients.cliente_lista, name='cliente_lista'),
     path('panel/clientes/nuevo/', clients.cliente_crear, name='cliente_crear'),
+    path('panel/clientes/buscar-ajax/', clients.cliente_buscar_ajax, name='cliente_buscar_ajax'),
+    path('panel/clientes/crear-ajax/', clients.cliente_crear_ajax, name='cliente_crear_ajax'),
     path('panel/clientes/<int:pk>/', clients.cliente_detalle, name='cliente_detalle'),
     path('panel/clientes/<int:pk>/editar/', clients.cliente_editar, name='cliente_editar'),
     path('panel/clientes/<int:pk>/eliminar/', clients.cliente_eliminar, name='cliente_eliminar'),
@@ -48,6 +50,8 @@ urlpatterns = [
     # Productos y servicios
     path('panel/productos/', products.producto_lista, name='producto_lista'),
     path('panel/productos/nuevo/', products.producto_crear, name='producto_crear'),
+    path('panel/productos/buscar-ajax/', products.producto_buscar_ajax, name='producto_buscar_ajax'),
+    path('panel/productos/crear-ajax/', products.producto_crear_ajax, name='producto_crear_ajax'),
     path('panel/productos/<int:pk>/editar/', products.producto_editar, name='producto_editar'),
     path('panel/productos/<int:pk>/archivar/', products.producto_archivar, name='producto_archivar'),
 

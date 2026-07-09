@@ -199,12 +199,12 @@ class Quotation(models.Model):
         (STATUS_EXPIRED, 'Expirada'),
     ]
     business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name='quotations')
-    client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name='quotations')
+    client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name='quotations', verbose_name='Cliente')
     quote_number = models.CharField(max_length=20)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_DRAFT)
     issue_date = models.DateField('Fecha')
     valid_until = models.DateField('Válida hasta')
-    currency = models.CharField(max_length=3, choices=CURRENCY_CHOICES, default='CRC')
+    currency = models.CharField('Moneda', max_length=3, choices=CURRENCY_CHOICES, default='CRC')
     subtotal = models.DecimalField(max_digits=14, decimal_places=2, default=0)
     discount_total = models.DecimalField(max_digits=14, decimal_places=2, default=0)
     tax_total = models.DecimalField(max_digits=14, decimal_places=2, default=0)

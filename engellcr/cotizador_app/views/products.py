@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 
@@ -17,6 +18,36 @@ def producto_lista(request):
     paginator = Paginator(qs, 20)
     page = paginator.get_page(request.GET.get('page'))
     return render(request, 'cotizador_app/producto_lista.html', {'page_obj': page, 'q': q})
+
+
+@business_required
+def producto_buscar_ajax(request):
+    """Backs the searchable product picker on the quotation form's item rows."""
+    q = request.GET.get('q', '').strip()
+    qs = Product.objects.filter(business=request.business, is_active=True)
+    if q:
+        qs = qs.filter(Q(name__icontains=q) | Q(sku__icontains=q) | Q(description__icontains=q))
+    results = [
+        {'id': p.id, 'text': p.name, 'price': str(p.unit_price), 'tax': str(p.tax_pct)}
+        for p in qs.order_by('name')[:20]
+    ]
+    return JsonResponse(results, safe=False)
+
+
+@business_required
+def producto_crear_ajax(request):
+    """Quick-create used by the "+ Nuevo producto" modal on the quotation form's item rows."""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido.'}, status=405)
+    form = ProductForm(request.POST)
+    if form.is_valid():
+        product = form.save(commit=False)
+        product.business = request.business
+        product.is_active = True  # not exposed in the quick-add modal — new products default active
+        product.save()
+        return JsonResponse({'id': product.id, 'text': product.name,
+                              'price': str(product.unit_price), 'tax': str(product.tax_pct)})
+    return JsonResponse({'errors': form.errors.get_json_data()}, status=400)
 
 
 @business_required

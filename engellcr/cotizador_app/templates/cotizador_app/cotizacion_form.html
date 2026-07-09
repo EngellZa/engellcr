@@ -1,6 +1,9 @@
 {% extends 'cotizador_app/base.html' %}
 {% block title %}{{ titulo }}{% endblock %}
 {% block page_title %}{{ titulo }}{% endblock %}
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+{% endblock %}
 {% block content %}
 <form method="post">
   {% csrf_token %}
@@ -9,7 +12,14 @@
       {% for field in form %}
       <div class="col-md-6">
         <label class="form-label">{{ field.label }}</label>
-        {{ field }}
+        {% if field.name == 'client' %}
+          <div class="d-flex gap-2 align-items-start">
+            <div class="flex-grow-1">{{ field }}</div>
+            <button type="button" class="btn btn-outline-secondary" id="btn-new-client" title="Nuevo cliente"><i class="bi bi-plus-lg"></i></button>
+          </div>
+        {% else %}
+          {{ field }}
+        {% endif %}
         {% if field.errors %}<div class="text-danger small">{{ field.errors|striptags }}</div>{% endif %}
       </div>
       {% endfor %}
@@ -24,7 +34,7 @@
       <table class="table table-sm align-middle" id="items-table">
         <thead>
           <tr>
-            <th style="min-width:160px;">Producto</th>
+            <th style="min-width:200px;">Producto</th>
             <th style="min-width:180px;">Descripción</th>
             <th style="width:90px;">Cant.</th>
             <th style="width:110px;">Precio</th>
@@ -37,7 +47,12 @@
         {% for item_form in formset %}
           <tr class="item-row">
             {% for hidden in item_form.hidden_fields %}{{ hidden }}{% endfor %}
-            <td>{{ item_form.product }}</td>
+            <td>
+              <div class="d-flex gap-1 align-items-start">
+                <div class="flex-grow-1">{{ item_form.product }}</div>
+                <button type="button" class="btn btn-sm btn-outline-secondary btn-new-product" title="Nuevo producto"><i class="bi bi-plus-lg"></i></button>
+              </div>
+            </td>
             <td>{{ item_form.description }}</td>
             <td>{{ item_form.quantity }}</td>
             <td>{{ item_form.unit_price }}</td>
@@ -67,7 +82,12 @@
 <!-- Plantilla oculta para nuevas filas — Django rellena el prefijo con __prefix__ -->
 <template id="empty-item-row">
   <tr class="item-row">
-    <td>{{ formset.empty_form.product }}</td>
+    <td>
+      <div class="d-flex gap-1 align-items-start">
+        <div class="flex-grow-1">{{ formset.empty_form.product }}</div>
+        <button type="button" class="btn btn-sm btn-outline-secondary btn-new-product" title="Nuevo producto"><i class="bi bi-plus-lg"></i></button>
+      </div>
+    </td>
     <td>{{ formset.empty_form.description }}</td>
     <td>{{ formset.empty_form.quantity }}</td>
     <td>{{ formset.empty_form.unit_price }}</td>
@@ -77,16 +97,169 @@
   </tr>
 </template>
 
+<!-- Modal: nuevo cliente -->
+<div class="modal fade" id="modalCliente" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="form-nuevo-cliente">
+        <div class="modal-header">
+          <h5 class="modal-title">Nuevo cliente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-danger py-2 d-none" data-error-summary></div>
+          <div class="mb-2">
+            <label class="form-label">Nombre completo</label>
+            <input type="text" name="name" class="form-control" required>
+            <div class="invalid-feedback" data-error-for="name"></div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Empresa</label>
+            <input type="text" name="company_name" class="form-control">
+            <div class="invalid-feedback" data-error-for="company_name"></div>
+          </div>
+          <div class="row g-2">
+            <div class="col-md-6 mb-2">
+              <label class="form-label">Correo</label>
+              <input type="email" name="email" class="form-control">
+              <div class="invalid-feedback" data-error-for="email"></div>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="form-label">Teléfono</label>
+              <input type="text" name="phone" class="form-control">
+              <div class="invalid-feedback" data-error-for="phone"></div>
+            </div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Identificación</label>
+            <input type="text" name="identification" class="form-control">
+            <div class="invalid-feedback" data-error-for="identification"></div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Dirección</label>
+            <textarea name="address" class="form-control" rows="2"></textarea>
+            <div class="invalid-feedback" data-error-for="address"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Crear cliente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: nuevo producto -->
+<div class="modal fade" id="modalProducto" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="form-nuevo-producto">
+        <div class="modal-header">
+          <h5 class="modal-title">Nuevo producto/servicio</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-danger py-2 d-none" data-error-summary></div>
+          <div class="mb-2">
+            <label class="form-label">Nombre</label>
+            <input type="text" name="name" class="form-control" required>
+            <div class="invalid-feedback" data-error-for="name"></div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Descripción</label>
+            <textarea name="description" class="form-control" rows="2"></textarea>
+            <div class="invalid-feedback" data-error-for="description"></div>
+          </div>
+          <div class="row g-2">
+            <div class="col-md-4 mb-2">
+              <label class="form-label">SKU</label>
+              <input type="text" name="sku" class="form-control">
+              <div class="invalid-feedback" data-error-for="sku"></div>
+            </div>
+            <div class="col-md-4 mb-2">
+              <label class="form-label">Precio unitario</label>
+              <input type="number" step="0.01" name="unit_price" class="form-control" required>
+              <div class="invalid-feedback" data-error-for="unit_price"></div>
+            </div>
+            <div class="col-md-4 mb-2">
+              <label class="form-label">Impuesto (%)</label>
+              <input type="number" step="0.01" name="tax_pct" class="form-control" value="0">
+              <div class="invalid-feedback" data-error-for="tax_pct"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Crear producto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 <script>
 (function () {
   var tbody = document.getElementById('items-tbody');
   var totalForms = document.getElementById('id_items-TOTAL_FORMS');
   var initialForms = document.getElementById('id_items-INITIAL_FORMS');
+  var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  var productSelects = []; // every live TomSelect instance across item rows
 
-  // Existing (already-saved) rows keep their original items-N index — the server matches
-  // them to DB rows by position among the first INITIAL_FORMS forms. Only "new" rows
-  // (added via "+ Agregar ítem", not yet saved) get renumbered here, so that removing one
-  // never leaves a gap where TOTAL_FORMS claims more forms than actually exist in the DOM.
+  // ── Remote-search TomSelect setup — options are fetched on demand instead of
+  // rendering the whole client/product list into the page, so this stays fast
+  // and usable even with thousands of records. ──
+  function initClientSelect() {
+    var el = document.getElementById('id_client');
+    if (!el) return;
+    new TomSelect(el, {
+      valueField: 'id', labelField: 'text', searchField: 'text',
+      placeholder: 'Buscar cliente por nombre, empresa, correo, teléfono o identificación…',
+      load: function (query, callback) {
+        fetch('{% url "cotizador_app:cliente_buscar_ajax" %}?q=' + encodeURIComponent(query))
+          .then(function (r) { return r.json(); })
+          .then(function (data) { callback(data); })
+          .catch(function () { callback(); });
+      },
+    });
+  }
+
+  function initProductSelect(select) {
+    if (!select || select.tomselect) return;
+    var ts = new TomSelect(select, {
+      valueField: 'id', labelField: 'text', searchField: 'text',
+      placeholder: 'Buscar producto o servicio…',
+      load: function (query, callback) {
+        fetch('{% url "cotizador_app:producto_buscar_ajax" %}?q=' + encodeURIComponent(query))
+          .then(function (r) { return r.json(); })
+          .then(function (data) { callback(data); })
+          .catch(function () { callback(); });
+      },
+      onItemAdd: function (value) {
+        var opt = this.options[value];
+        var row = select.closest('.item-row');
+        if (!opt || !row) return;
+        var desc = row.querySelector('input[name$="-description"]');
+        var price = row.querySelector('input[name$="-unit_price"]');
+        var tax = row.querySelector('input[name$="-tax_pct"]');
+        if (desc && !desc.value) desc.value = opt.text;
+        if (price && opt.price !== undefined) price.value = opt.price;
+        if (tax && opt.tax !== undefined) tax.value = opt.tax;
+      },
+    });
+    productSelects.push(ts);
+  }
+
+  function addProductOptionEverywhere(product) {
+    productSelects.forEach(function (ts) {
+      if (!ts.options[product.id]) ts.addOption(product);
+      ts.refreshOptions(false);
+    });
+  }
+
+  // ── Row add/remove/renumber (unchanged from before, plus TomSelect wiring) ──
   function renumberRows() {
     var rows = tbody.querySelectorAll('.item-row');
     var initialCount = parseInt(initialForms.value, 10);
@@ -104,18 +277,16 @@
     totalForms.value = rows.length;
   }
 
-  function bindProductAutofill(row) {
-    var select = row.querySelector('.item-product');
-    if (!select) return;
-    select.addEventListener('change', function () {
-      var opt = select.options[select.selectedIndex];
-      if (!opt || !opt.dataset.price) return;
-      var desc = row.querySelector('input[name$="-description"]');
-      var price = row.querySelector('input[name$="-unit_price"]');
-      var tax = row.querySelector('input[name$="-tax_pct"]');
-      if (desc && !desc.value) desc.value = opt.text;
-      if (price) price.value = opt.dataset.price;
-      if (tax) tax.value = opt.dataset.tax;
+  function bindNewProductButton(row) {
+    var btn = row.querySelector('.btn-new-product');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var select = row.querySelector('.item-product');
+      currentProductRow = select ? select.tomselect : null;
+      var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalProducto'));
+      clearModalErrors(document.getElementById('form-nuevo-producto'));
+      document.getElementById('form-nuevo-producto').reset();
+      modal.show();
     });
   }
 
@@ -134,7 +305,8 @@
 
   // Existing rows rendered by the server
   document.querySelectorAll('#items-tbody .item-row').forEach(function (row) {
-    bindProductAutofill(row);
+    initProductSelect(row.querySelector('.item-product'));
+    bindNewProductButton(row);
     bindRemove(row);
   });
 
@@ -146,9 +318,81 @@
     wrapper.innerHTML = html.trim();
     var newRow = wrapper.firstElementChild;
     tbody.appendChild(newRow);
-    bindProductAutofill(newRow);
+    initProductSelect(newRow.querySelector('.item-product'));
+    bindNewProductButton(newRow);
     bindRemove(newRow);
     renumberRows();
+  });
+
+  initClientSelect();
+
+  // ── "+ Nuevo cliente" / "+ Nuevo producto" modals ──
+  var currentProductRow = null; // which row's TomSelect instance to fill after creating a product
+
+  function clearModalErrors(formEl) {
+    formEl.querySelectorAll('.invalid-feedback').forEach(function (el) { el.textContent = ''; });
+    formEl.querySelectorAll('.is-invalid').forEach(function (el) { el.classList.remove('is-invalid'); });
+    var summary = formEl.querySelector('[data-error-summary]');
+    summary.classList.add('d-none');
+    summary.textContent = '';
+  }
+
+  function showModalErrors(formEl, errors) {
+    Object.keys(errors).forEach(function (field) {
+      var messages = errors[field].map(function (e) { return e.message; }).join(' ');
+      var input = formEl.querySelector('[name="' + field + '"]');
+      var feedback = formEl.querySelector('[data-error-for="' + field + '"]');
+      if (input) input.classList.add('is-invalid');
+      if (feedback) feedback.textContent = messages;
+      else {
+        var summary = formEl.querySelector('[data-error-summary]');
+        summary.classList.remove('d-none');
+        summary.textContent += messages + ' ';
+      }
+    });
+  }
+
+  function submitModalForm(formEl, url, onSuccess) {
+    var formData = new FormData(formEl);
+    formData.append('csrfmiddlewaretoken', csrfToken);
+    var submitBtn = formEl.querySelector('button[type=submit]');
+    submitBtn.disabled = true;
+    return fetch(url, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+      .then(function (result) {
+        clearModalErrors(formEl);
+        if (result.ok) {
+          onSuccess(result.data);
+        } else {
+          showModalErrors(formEl, result.data.errors || {});
+        }
+      })
+      .finally(function () { submitBtn.disabled = false; });
+  }
+
+  document.getElementById('btn-new-client').addEventListener('click', function () {
+    clearModalErrors(document.getElementById('form-nuevo-cliente'));
+    document.getElementById('form-nuevo-cliente').reset();
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCliente')).show();
+  });
+
+  document.getElementById('form-nuevo-cliente').addEventListener('submit', function (e) {
+    e.preventDefault();
+    submitModalForm(this, '{% url "cotizador_app:cliente_crear_ajax" %}', function (client) {
+      var clientSelect = document.getElementById('id_client').tomselect;
+      clientSelect.addOption(client);
+      clientSelect.setValue(client.id);
+      bootstrap.Modal.getInstance(document.getElementById('modalCliente')).hide();
+    });
+  });
+
+  document.getElementById('form-nuevo-producto').addEventListener('submit', function (e) {
+    e.preventDefault();
+    submitModalForm(this, '{% url "cotizador_app:producto_crear_ajax" %}', function (product) {
+      addProductOptionEverywhere(product);
+      if (currentProductRow) currentProductRow.setValue(product.id);
+      bootstrap.Modal.getInstance(document.getElementById('modalProducto')).hide();
+    });
   });
 })();
 </script>

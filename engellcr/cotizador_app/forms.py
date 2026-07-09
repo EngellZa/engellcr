@@ -112,6 +112,16 @@ class QuotationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if business is not None:
             self.fields['client'].queryset = Client.objects.filter(business=business, is_deleted=False)
+            # Only render the currently selected client (if any) as a real <option> — the rest
+            # are found via the searchable-remote-select JS, so this stays light even with
+            # thousands of clients. The queryset above still validates whatever gets submitted.
+            choices = [('', '---------')]
+            current = self['client'].value()
+            if current:
+                selected = self.fields['client'].queryset.filter(pk=current).first()
+                if selected:
+                    choices.append((selected.pk, str(selected)))
+            self.fields['client'].widget.choices = choices
 
 
 class ProductSelect(forms.Select):
@@ -143,9 +153,16 @@ class QuotationItemForm(forms.ModelForm):
 
     def __init__(self, *args, business=None, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['product'].required = False
         if business is not None:
             self.fields['product'].queryset = Product.objects.filter(business=business, is_active=True)
-        self.fields['product'].required = False
+            choices = [('', '---------')]
+            current = self['product'].value()
+            if current:
+                selected = self.fields['product'].queryset.filter(pk=current).first()
+                if selected:
+                    choices.append((selected.pk, str(selected)))
+            self.fields['product'].widget.choices = choices
 
 
 QuotationItemFormSet = inlineformset_factory(
