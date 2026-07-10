@@ -15,7 +15,7 @@
         {% if field.name == 'client' %}
           <div class="d-flex gap-2 align-items-start">
             <div class="flex-grow-1">{{ field }}</div>
-            <button type="button" class="btn btn-outline-secondary" id="btn-new-client" title="Nuevo cliente"><i class="bi bi-plus-lg"></i></button>
+            <button type="button" class="btn btn-outline-secondary fw-bold" id="btn-new-client" title="Nuevo cliente" style="font-size:1.1rem; line-height:1;">+</button>
           </div>
         {% else %}
           {{ field }}
@@ -57,7 +57,7 @@
             <td>
               <div class="d-flex gap-1 align-items-start">
                 <div class="flex-grow-1">{{ item_form.product }}</div>
-                <button type="button" class="btn btn-sm btn-outline-secondary btn-new-product" title="Nuevo producto"><i class="bi bi-plus-lg"></i></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary btn-new-product fw-bold" title="Nuevo producto" style="font-size:1rem; line-height:1;">+</button>
               </div>
             </td>
             <td>{{ item_form.description }}</td>
@@ -92,7 +92,7 @@
     <td>
       <div class="d-flex gap-1 align-items-start">
         <div class="flex-grow-1">{{ formset.empty_form.product }}</div>
-        <button type="button" class="btn btn-sm btn-outline-secondary btn-new-product" title="Nuevo producto"><i class="bi bi-plus-lg"></i></button>
+        <button type="button" class="btn btn-sm btn-outline-secondary btn-new-product fw-bold" title="Nuevo producto" style="font-size:1rem; line-height:1;">+</button>
       </div>
     </td>
     <td>{{ formset.empty_form.description }}</td>
@@ -224,6 +224,8 @@
     new TomSelect(el, {
       valueField: 'id', labelField: 'text', searchField: 'text',
       placeholder: 'Buscar cliente por nombre, empresa, correo, teléfono o identificación…',
+      preload: 'focus', // show suggestions as soon as the field is clicked, before typing
+      shouldLoad: function () { return true; }, // load() must run even for an empty query
       load: function (query, callback) {
         fetch('{% url "cotizador_app:cliente_buscar_ajax" %}?q=' + encodeURIComponent(query))
           .then(function (r) { return r.json(); })
@@ -240,6 +242,8 @@
       placeholder: 'Buscar producto o servicio…',
       dropdownParent: 'body', // the item row lives inside a scrollable .table-responsive,
                                // which clips an inline dropdown — render against <body> instead
+      preload: 'focus', // show suggestions as soon as the field is clicked, before typing
+      shouldLoad: function () { return true; }, // load() must run even for an empty query
       load: function (query, callback) {
         fetch('{% url "cotizador_app:producto_buscar_ajax" %}?q=' + encodeURIComponent(query))
           .then(function (r) { return r.json(); })
