@@ -22,6 +22,13 @@
   .totals td { padding: 3px 8px; font-size: 10pt; }
   .totals .total-row { font-weight: bold; font-size: 12pt; border-top: 2px solid {{ quotation.business.color_primary }}; }
   .notes { margin-top: 18px; font-size: 9pt; color: #555; }
+  .payment-info { margin-top: 20px; }
+  .payment-info h4 { font-size: 9pt; text-transform: uppercase; color: #888; margin: 14px 0 4px; }
+  .payment-info h5 { font-size: 9pt; font-weight: bold; margin: 8px 0 4px; }
+  table.bank-accounts { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 9pt; }
+  table.bank-accounts th { text-align: left; padding: 4px 8px; border-bottom: 1px solid #ccc; }
+  table.bank-accounts td { padding: 4px 8px; border-bottom: 1px solid #eee; }
+  .sinpe-line { font-size: 9pt; margin-top: 8px; }
   .footer { margin-top: 30px; padding-top: 10px; border-top: 1px solid #ddd; font-size: 8pt; color: #999; text-align: center; }
 </style>
 </head>
@@ -79,6 +86,26 @@
 
   {% if quotation.notes %}<div class="notes"><strong>Notas:</strong> {{ quotation.notes }}</div>{% endif %}
   {% if quotation.terms %}<div class="notes"><strong>Términos y condiciones:</strong> {{ quotation.terms }}</div>{% endif %}
+
+  {% if quotation.business.bank_accounts.all or quotation.business.sinpe_number %}
+  <div class="payment-info">
+    {% regroup quotation.business.bank_accounts.all by get_currency_display as currency_groups %}
+    {% for group in currency_groups %}
+      <h4>Cuentas Bancarias {{ group.grouper }}</h4>
+      <table class="bank-accounts">
+        <thead><tr><th>Banco</th><th>Cuenta corriente</th><th>IBAN</th></tr></thead>
+        <tbody>
+        {% for account in group.list %}
+          <tr><td>{{ account.bank_name }}</td><td>{{ account.account_number }}</td><td>{{ account.iban }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endfor %}
+    {% if quotation.business.sinpe_number %}
+      <div class="sinpe-line"><strong>SINPE Móvil:</strong> {{ quotation.business.sinpe_number }}{% if quotation.business.sinpe_account_holder %} — {{ quotation.business.sinpe_account_holder }}{% endif %}</div>
+    {% endif %}
+  </div>
+  {% endif %}
 
   <div class="footer">
     {% if quotation.business.footer_note %}{{ quotation.business.footer_note }}{% else %}Generado con Cotización Express{% endif %}

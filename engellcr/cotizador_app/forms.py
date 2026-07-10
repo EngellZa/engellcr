@@ -5,7 +5,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory
 
-from .models import Business, Client, Product, Quotation, QuotationItem
+from .models import Business, BankAccount, Client, Product, Quotation, QuotationItem
 
 
 class RegistroForm(forms.Form):
@@ -65,6 +65,24 @@ class BusinessForm(forms.ModelForm):
             'sinpe_number': forms.TextInput(attrs={'class': 'form-control'}),
             'sinpe_account_holder': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+
+class BankAccountForm(forms.ModelForm):
+    class Meta:
+        model = BankAccount
+        fields = ['bank_name', 'currency', 'account_number', 'iban']
+        widgets = {
+            'bank_name': forms.TextInput(attrs={'class': 'form-control form-control-sm', 'placeholder': 'Banco'}),
+            'currency': forms.Select(attrs={'class': 'form-select form-select-sm'}),
+            'account_number': forms.TextInput(attrs={'class': 'form-control form-control-sm', 'placeholder': 'Cuenta corriente'}),
+            'iban': forms.TextInput(attrs={'class': 'form-control form-control-sm', 'placeholder': 'IBAN'}),
+        }
+
+
+BankAccountFormSet = inlineformset_factory(
+    Business, BankAccount, form=BankAccountForm,
+    extra=0, can_delete=True,
+)
 
 
 class ClientForm(forms.ModelForm):

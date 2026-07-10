@@ -17,6 +17,11 @@ def compute_content_hash(quotation):
             'phone': business.phone, 'address': business.address,
             'color_primary': business.color_primary, 'footer_note': business.footer_note,
             'logo': business.logo.name if business.logo else '',
+            'sinpe_number': business.sinpe_number, 'sinpe_account_holder': business.sinpe_account_holder,
+            'bank_accounts': [
+                {'bank_name': a.bank_name, 'currency': a.currency, 'account_number': a.account_number, 'iban': a.iban}
+                for a in business.bank_accounts.all()
+            ],
         },
         'client': {
             'name': quotation.client.name, 'company_name': quotation.client.company_name,

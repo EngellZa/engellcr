@@ -121,6 +121,26 @@ class Business(models.Model):
         return self.usage_records.order_by('-created_at').first()
 
 
+class BankAccount(models.Model):
+    """A business can list several of these (one per bank/currency) — shown grouped by
+    currency on the quotation PDF, alongside the existing SINPE fields on Business."""
+    business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name='bank_accounts')
+    bank_name = models.CharField('Banco', max_length=100)
+    currency = models.CharField('Moneda', max_length=3, choices=CURRENCY_CHOICES, default='CRC')
+    account_number = models.CharField('Cuenta corriente', max_length=50, blank=True)
+    iban = models.CharField('IBAN', max_length=50, blank=True)
+    sort_order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['currency', 'sort_order', 'id']
+        verbose_name = 'Cuenta Bancaria'
+        verbose_name_plural = 'Cuentas Bancarias'
+
+    def __str__(self):
+        return f'{self.bank_name} ({self.get_currency_display()})'
+
+
 class BusinessNote(models.Model):
     business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name='notes')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)

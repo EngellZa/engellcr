@@ -2,7 +2,7 @@
 {% block title %}Perfil de Negocio{% endblock %}
 {% block page_title %}Perfil de Negocio{% endblock %}
 {% block content %}
-<div class="card p-4" style="max-width:640px;">
+<div class="card p-4 mb-3" style="max-width:640px;">
   {% if not business %}
     <div class="alert alert-info">Completá el perfil de tu negocio para empezar a cotizar.</div>
   {% endif %}
@@ -15,7 +15,95 @@
       {% if field.errors %}<div class="text-danger small">{{ field.errors|striptags }}</div>{% endif %}
     </div>
     {% endfor %}
+
+    <hr class="my-4">
+    <h6 class="mb-1">Cuentas bancarias</h6>
+    <p class="text-muted small">Aparecen en el PDF de tus cotizaciones, agrupadas por moneda, junto a tus datos de SINPE Móvil.</p>
+    {{ bank_formset.management_form }}
+    {% if bank_formset.non_form_errors %}<div class="alert alert-danger py-2">{{ bank_formset.non_form_errors|striptags }}</div>{% endif %}
+    <div id="bank-rows">
+      {% for bank_form in bank_formset %}
+      <div class="row g-2 mb-2 align-items-start bank-row">
+        {% for hidden in bank_form.hidden_fields %}{{ hidden }}{% endfor %}
+        <div class="col-md-3">{{ bank_form.bank_name }}</div>
+        <div class="col-md-3">{{ bank_form.currency }}</div>
+        <div class="col-md-3">{{ bank_form.account_number }}</div>
+        <div class="col-md-2">{{ bank_form.iban }}</div>
+        <div class="col-md-1">
+          {% if bank_form.instance.pk %}
+            <label class="text-danger small"><input type="checkbox" name="{{ bank_form.prefix }}-DELETE" class="row-delete-existing"> 🗑️</label>
+          {% else %}
+            <button type="button" class="btn btn-sm btn-outline-danger row-remove-new">×</button>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <button type="button" id="add-bank-row" class="btn btn-sm btn-outline-primary mb-3">
+      <i class="bi bi-plus-lg"></i> Agregar cuenta
+    </button>
+    <br>
     <button type="submit" class="btn btn-primary">Guardar</button>
   </form>
 </div>
+
+<template id="empty-bank-row">
+  <div class="row g-2 mb-2 align-items-start bank-row">
+    <div class="col-md-3">{{ bank_formset.empty_form.bank_name }}</div>
+    <div class="col-md-3">{{ bank_formset.empty_form.currency }}</div>
+    <div class="col-md-3">{{ bank_formset.empty_form.account_number }}</div>
+    <div class="col-md-2">{{ bank_formset.empty_form.iban }}</div>
+    <div class="col-md-1"><button type="button" class="btn btn-sm btn-outline-danger row-remove-new">×</button></div>
+  </div>
+</template>
+
+<script>
+(function () {
+  var container = document.getElementById('bank-rows');
+  var totalForms = document.getElementById('id_bank-TOTAL_FORMS');
+  var initialForms = document.getElementById('id_bank-INITIAL_FORMS');
+
+  function renumberRows() {
+    var rows = container.querySelectorAll('.bank-row');
+    var initialCount = parseInt(initialForms.value, 10);
+    rows.forEach(function (row, i) {
+      if (i < initialCount) return;
+      var field = row.querySelector('[name^="bank-"]');
+      if (!field) return;
+      var oldIndex = field.name.match(/^bank-(\d+)-/)[1];
+      if (oldIndex === String(i)) return;
+      row.querySelectorAll('[name^="bank-' + oldIndex + '-"]').forEach(function (el) {
+        el.name = el.name.replace('bank-' + oldIndex + '-', 'bank-' + i + '-');
+        if (el.id) el.id = el.id.replace('id_bank-' + oldIndex + '-', 'id_bank-' + i + '-');
+      });
+    });
+    totalForms.value = rows.length;
+  }
+
+  function bindRemove(row) {
+    var btn = row.querySelector('.row-remove-new');
+    if (btn) btn.addEventListener('click', function () { row.remove(); renumberRows(); });
+    var delCheckbox = row.querySelector('.row-delete-existing');
+    if (delCheckbox) {
+      delCheckbox.addEventListener('change', function () {
+        row.style.opacity = delCheckbox.checked ? '0.4' : '1';
+      });
+    }
+  }
+
+  container.querySelectorAll('.bank-row').forEach(bindRemove);
+
+  document.getElementById('add-bank-row').addEventListener('click', function () {
+    var index = parseInt(totalForms.value, 10);
+    var template = document.getElementById('empty-bank-row').innerHTML;
+    var html = template.replace(/__prefix__/g, index);
+    var wrapper = document.createElement('div');
+    wrapper.innerHTML = html.trim();
+    var newRow = wrapper.firstElementChild;
+    container.appendChild(newRow);
+    bindRemove(newRow);
+    renumberRows();
+  });
+})();
+</script>
 {% endblock %}

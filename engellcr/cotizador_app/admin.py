@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import (Role, UserRole, UserProfile, Business, BusinessNote, Client, Product,
-                      Quotation, QuotationItem, QuotationShareLink, SubscriptionPlan,
+from .models import (Role, UserRole, UserProfile, Business, BankAccount, BusinessNote, Client,
+                      Product, Quotation, QuotationItem, QuotationShareLink, SubscriptionPlan,
                       Subscription, UsageTracking, Payment, PaymentEvent, SinpePaymentReceipt,
                       AuditLog, EmailLog)
 
@@ -31,11 +31,16 @@ class BusinessNoteInline(admin.TabularInline):
     readonly_fields = ['author', 'created_at']
 
 
+class BankAccountInline(admin.TabularInline):
+    model = BankAccount
+    extra = 0
+
+
 @admin.register(Business)
 class BusinessAdmin(admin.ModelAdmin):
     list_display = ['name', 'owner', 'email', 'currency', 'is_deleted', 'created_at']
     search_fields = ['name', 'owner__email', 'legal_id']
-    inlines = [BusinessNoteInline]
+    inlines = [BankAccountInline, BusinessNoteInline]
 
 
 @admin.register(Client)

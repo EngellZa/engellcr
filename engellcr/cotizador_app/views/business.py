@@ -1,9 +1,10 @@
 from django.contrib import messages
+from django.db import transaction
 from django.shortcuts import render, redirect
 
 from ..cache import cx_get, cx_set, plan_list_key, dashboard_summary_key
 from ..decorators import business_required, cotizador_login_required, get_current_business
-from ..forms import BusinessForm
+from ..forms import BusinessForm, BankAccountFormSet
 from ..models import Quotation
 
 
@@ -17,15 +18,22 @@ def perfil_negocio(request):
     business = get_current_business(request)
     if request.method == 'POST':
         form = BusinessForm(request.POST, request.FILES, instance=business)
-        if form.is_valid():
-            business = form.save(commit=False)
-            business.owner = request.user
-            business.save()
+        bank_formset = BankAccountFormSet(request.POST, instance=business, prefix='bank')
+        if form.is_valid() and bank_formset.is_valid():
+            with transaction.atomic():
+                business = form.save(commit=False)
+                business.owner = request.user
+                business.save()
+                bank_formset.instance = business
+                bank_formset.save()
             messages.success(request, 'Perfil de negocio actualizado.')
             return redirect('cotizador_app:dashboard')
     else:
         form = BusinessForm(instance=business)
-    return render(request, 'cotizador_app/perfil_negocio.html', {'form': form, 'business': business})
+        bank_formset = BankAccountFormSet(instance=business, prefix='bank')
+    return render(request, 'cotizador_app/perfil_negocio.html', {
+        'form': form, 'business': business, 'bank_formset': bank_formset,
+    })
 
 
 @business_required
