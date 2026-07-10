@@ -27,8 +27,8 @@
         <span class="plan-badge">MÁS POPULAR</span>
       {% endif %}
       <div class="plan-name">{{ plan.name }}</div>
-      <div class="plan-price mb-1">₡{{ plan.price_crc|numero:0 }}<span class="fs-6 fw-normal text-muted">/mes</span></div>
-      <div class="plan-price-usd">o ${{ plan.price_usd|numero:0 }} USD/mes con PayPal</div>
+      <div class="plan-price mb-1">${{ plan.price_usd|numero:0 }}<span class="fs-6 fw-normal text-muted">/mes USD</span></div>
+      <div class="plan-price-usd">o ₡{{ plan.price_crc|numero:0 }}/mes con SINPE Móvil</div>
       <div class="flex-grow-1">
         {% if plan.monthly_quote_limit %}
           <div class="plan-feature"><i class="bi bi-check-circle-fill"></i> {{ plan.monthly_quote_limit }} cotizaciones/mes</div>
@@ -39,8 +39,8 @@
         <div class="plan-feature"><i class="bi bi-check-circle-fill"></i> Envío por correo y WhatsApp</div>
       </div>
       <div class="d-grid gap-2 mt-3">
-        <a href="{% url 'cotizador_app:pago_iniciar' plan.id 'sinpe' %}" class="btn {% if plan.code == 'pro' %}btn-primary{% else %}btn-outline-secondary{% endif %} btn-sm">Pagar por SINPE Móvil</a>
-        <a href="{% url 'cotizador_app:pago_iniciar' plan.id 'tilopay' %}" class="btn btn-outline-secondary btn-sm">Pagar con Tilopay</a>
+        <a href="{% url 'cotizador_app:pago_iniciar' plan.id 'sinpe' %}" class="btn {% if plan.code == 'pro' %}btn-primary{% else %}btn-outline-secondary{% endif %} btn-sm">Pagar por SINPE Móvil (₡ Colones)</a>
+        <a href="{% url 'cotizador_app:pago_iniciar' plan.id 'tilopay' %}" class="btn btn-outline-secondary btn-sm">Pagar con Tilopay (₡ Colones)</a>
         <a href="{% url 'cotizador_app:pago_iniciar' plan.id 'paypal' %}" class="btn btn-outline-secondary btn-sm">Pagar con PayPal (USD)</a>
       </div>
     </div>

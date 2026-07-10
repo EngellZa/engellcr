@@ -1,3 +1,6 @@
+import logging
+
+import requests
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
@@ -7,6 +10,8 @@ from ..models import SubscriptionPlan, Payment, Role
 from ..payments import get_provider
 from ..payments.sinpe import create_pending_sinpe_payment
 from ..ratelimit import rate_limit
+
+logger = logging.getLogger(__name__)
 
 
 @business_required
@@ -41,7 +46,15 @@ def pago_iniciar(request, plan_id, metodo):
     if metodo in (Payment.TILOPAY, Payment.PAYPAL):
         provider = get_provider(metodo)
         payment = provider.create_pending_payment(request.business, plan)
-        redirect_url = provider.get_redirect_url(payment)
+        try:
+            redirect_url = provider.get_redirect_url(payment)
+        except requests.RequestException:
+            logger.exception('%s get_redirect_url failed for payment %s', metodo, payment.internal_reference)
+            payment.status = Payment.FAILED
+            payment.save(update_fields=['status'])
+            messages.error(request, 'No se pudo iniciar el pago con este método en este momento. '
+                                     'Por favor intenta de nuevo más tarde o elige otro método de pago.')
+            return redirect('cotizador_app:plan_mejorar')
         if redirect_url:
             return redirect(redirect_url)
         # Not configured yet — show a clear "coming soon" placeholder instead of a broken redirect.
