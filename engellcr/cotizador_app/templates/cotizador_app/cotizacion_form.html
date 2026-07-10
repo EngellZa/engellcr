@@ -238,6 +238,8 @@
     var ts = new TomSelect(select, {
       valueField: 'id', labelField: 'text', searchField: 'text',
       placeholder: 'Buscar producto o servicio…',
+      dropdownParent: 'body', // the item row lives inside a scrollable .table-responsive,
+                               // which clips an inline dropdown — render against <body> instead
       load: function (query, callback) {
         fetch('{% url "cotizador_app:producto_buscar_ajax" %}?q=' + encodeURIComponent(query))
           .then(function (r) { return r.json(); })

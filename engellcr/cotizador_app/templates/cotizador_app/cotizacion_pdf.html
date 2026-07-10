@@ -31,8 +31,7 @@
   table.items td { padding: 7px 10px; border-bottom: 1px solid #eee; font-size: 9.5pt; }
   table.items tbody tr:nth-child(even) { background: #fafbfc; }
 
-  .totals-wrap { display: flex; justify-content: flex-end; margin-top: 10px; margin-bottom: 20px; }
-  .totals { width: 260px; border-collapse: collapse; }
+  .totals { width: 260px; margin-left: auto; margin-top: 10px; margin-bottom: 20px; border-collapse: collapse; }
   .totals td { padding: 4px 10px; font-size: 9.5pt; color: #444; }
   .totals td.num { text-align: right; }
   .totals .total-row td { background: {{ quotation.business.color_primary }}; color: #fff; font-weight: bold; font-size: 12pt; padding: 9px 10px; }
@@ -104,14 +103,12 @@
     </tbody>
   </table>
 
-  <div class="totals-wrap">
-    <table class="totals">
-      <tr><td>Subtotal</td><td class="num">{{ quotation.subtotal|moneda:quotation.simbolo }}</td></tr>
-      {% if quotation.discount_total %}<tr><td>Descuento</td><td class="num">-{{ quotation.discount_total|moneda:quotation.simbolo }}</td></tr>{% endif %}
-      <tr><td>Impuesto</td><td class="num">{{ quotation.tax_total|moneda:quotation.simbolo }}</td></tr>
-      <tr class="total-row"><td>Total</td><td class="num">{{ quotation.total|moneda:quotation.simbolo }}</td></tr>
-    </table>
-  </div>
+  <table class="totals">
+    <tr><td>Subtotal</td><td class="num">{{ quotation.subtotal|moneda:quotation.simbolo }}</td></tr>
+    {% if quotation.discount_total %}<tr><td>Descuento</td><td class="num">-{{ quotation.discount_total|moneda:quotation.simbolo }}</td></tr>{% endif %}
+    <tr><td>Impuesto</td><td class="num">{{ quotation.tax_total|moneda:quotation.simbolo }}</td></tr>
+    <tr class="total-row"><td>Total</td><td class="num">{{ quotation.total|moneda:quotation.simbolo }}</td></tr>
+  </table>
 
   {% if quotation.notes %}<div class="notes"><strong>Notas:</strong> {{ quotation.notes }}</div>{% endif %}
   {% if quotation.terms %}<div class="notes"><strong>Términos y condiciones:</strong> {{ quotation.terms }}</div>{% endif %}
