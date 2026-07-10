@@ -12,7 +12,7 @@ from ..cache import invalidate_dashboard_cache, cx_delete, public_quote_key
 from ..decorators import business_required
 from ..emailing import send_transactional_email
 from ..forms import QuotationForm, QuotationItemFormSet
-from ..models import Quotation, QuotationShareLink
+from ..models import AuditLog, Quotation, QuotationShareLink
 from ..pdf import get_or_generate_pdf
 from ..ratelimit import rate_limit
 from ..services import next_quote_number, recalculate_totals, check_and_increment_usage, get_current_usage
@@ -32,6 +32,20 @@ def cotizacion_lista(request):
     return render(request, 'cotizador_app/cotizacion_lista.html', {
         'page_obj': page, 'status': status, 'q': q, 'estados': Quotation.STATUS_CHOICES,
     })
+
+
+@business_required
+def cotizacion_auditoria(request):
+    """Every quotation ever created/duplicated/deleted for this business — a durable
+    record independent of whether the quotation itself still exists, so a discrepancy
+    between plan usage and the current quotation count can always be explained."""
+    qs = AuditLog.objects.filter(
+        business=request.business,
+        action__in=['quotation_created', 'quotation_duplicated', 'quotation_deleted'],
+    ).select_related('actor')
+    paginator = Paginator(qs, 30)
+    page = paginator.get_page(request.GET.get('page'))
+    return render(request, 'cotizador_app/cotizacion_auditoria.html', {'page_obj': page})
 
 
 def _save_items_and_totals(quotation, formset):
@@ -69,6 +83,11 @@ def cotizacion_crear(request):
                 quotation.save()
                 formset.instance = quotation
                 _save_items_and_totals(quotation, formset)
+                AuditLog.objects.create(
+                    actor=request.user, business=request.business, action='quotation_created',
+                    target_repr=quotation.quote_number,
+                    metadata={'client': str(quotation.client), 'total': str(quotation.total)},
+                )
             invalidate_dashboard_cache(request.business.id)
             messages.success(request, f'Cotización {quotation.quote_number} creada.')
             return redirect('cotizador_app:cotizacion_detalle', pk=quotation.pk)
@@ -127,7 +146,17 @@ def cotizacion_eliminar(request, pk):
         return redirect('cotizador_app:cotizacion_detalle', pk=pk)
 
     if request.method == 'POST':
-        quotation.delete()
+        with transaction.atomic():
+            AuditLog.objects.create(
+                actor=request.user, business=request.business, action='quotation_deleted',
+                target_repr=quotation.quote_number,
+                metadata={
+                    'client': str(quotation.client), 'total': str(quotation.total),
+                    'created_at': quotation.created_at.isoformat(),
+                    'created_by': str(quotation.created_by) if quotation.created_by else '',
+                },
+            )
+            quotation.delete()
         invalidate_dashboard_cache(request.business.id)
         messages.success(request, 'Cotización eliminada.')
         return redirect('cotizador_app:cotizacion_lista')
@@ -179,6 +208,11 @@ def cotizacion_duplicar(request, pk):
             item.quotation = new
             item.save()
         recalculate_totals(new)
+        AuditLog.objects.create(
+            actor=request.user, business=request.business, action='quotation_duplicated',
+            target_repr=new.quote_number,
+            metadata={'client': str(new.client), 'total': str(new.total), 'source': original.quote_number},
+        )
     invalidate_dashboard_cache(request.business.id)
     messages.success(request, f'Cotización duplicada como {new.quote_number}. Podés cambiar el cliente y los datos antes de guardar.')
     return redirect('cotizador_app:cotizacion_editar', pk=new.pk)

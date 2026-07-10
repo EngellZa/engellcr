@@ -14,7 +14,10 @@
     </select>
     <button class="btn btn-sm btn-outline-secondary">Filtrar</button>
   </form>
-  <a href="{% url 'cotizador_app:cotizacion_crear' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Nueva Cotización</a>
+  <div class="d-flex gap-2">
+    <a href="{% url 'cotizador_app:cotizacion_auditoria' %}" class="btn btn-outline-secondary btn-sm" title="Historial de creadas, duplicadas y eliminadas"><i class="bi bi-clock-history"></i> Auditoría</a>
+    <a href="{% url 'cotizador_app:cotizacion_crear' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Nueva Cotización</a>
+  </div>
 </div>
 <div class="card">
   <table class="table mb-0">

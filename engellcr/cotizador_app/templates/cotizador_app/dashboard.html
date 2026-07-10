@@ -27,6 +27,7 @@
         <div class="progress mt-2" style="height:6px;">
           <div class="progress-bar" style="width: {% if usage.quota_limit %}{% widthratio usage.quotations_used usage.quota_limit 100 %}{% else %}5{% endif %}%;"></div>
         </div>
+        <div class="text-muted small mt-1">¿No coincide con tu total de cotizaciones? <a href="{% url 'cotizador_app:cotizacion_auditoria' %}">Ver auditoría</a> — el uso cuenta también las eliminadas.</div>
       {% endif %}
       <a href="{% url 'cotizador_app:plan_actual' %}" class="btn btn-cta btn-sm mt-2"><i class="bi bi-credit-card-fill"></i> Ver plan y pagos</a>
     </div>

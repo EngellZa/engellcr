@@ -57,6 +57,7 @@ urlpatterns = [
 
     # Cotizaciones
     path('panel/cotizaciones/', quotations.cotizacion_lista, name='cotizacion_lista'),
+    path('panel/cotizaciones/auditoria/', quotations.cotizacion_auditoria, name='cotizacion_auditoria'),
     path('panel/cotizaciones/nueva/', quotations.cotizacion_crear, name='cotizacion_crear'),
     path('panel/cotizaciones/<int:pk>/', quotations.cotizacion_detalle, name='cotizacion_detalle'),
     path('panel/cotizaciones/<int:pk>/editar/', quotations.cotizacion_editar, name='cotizacion_editar'),
