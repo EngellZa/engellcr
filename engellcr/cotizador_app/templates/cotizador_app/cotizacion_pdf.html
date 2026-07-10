@@ -5,63 +5,90 @@
 <meta charset="UTF-8">
 <style>
   @page { size: letter; margin: 2cm; }
-  body { font-family: 'DejaVu Sans', sans-serif; font-size: 10pt; color: #222; }
-  .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid {{ quotation.business.color_primary }}; padding-bottom: 12px; margin-bottom: 16px; }
-  .logo { max-height: 70px; max-width: 200px; }
-  .business-name { font-size: 16pt; font-weight: bold; color: {{ quotation.business.color_primary }}; }
-  .quote-meta { text-align: right; }
-  .quote-meta .number { font-size: 14pt; font-weight: bold; }
-  .parties { display: flex; justify-content: space-between; margin-bottom: 18px; }
-  .parties .box { width: 48%; }
-  .parties h4 { font-size: 9pt; text-transform: uppercase; color: #888; margin-bottom: 4px; }
-  table.items { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
-  table.items th { background: {{ quotation.business.color_primary }}; color: #fff; text-align: left; padding: 6px 8px; font-size: 9pt; }
-  table.items td { padding: 6px 8px; border-bottom: 1px solid #eee; font-size: 9.5pt; }
-  table.items td.num { text-align: right; }
-  .totals { width: 260px; margin-left: auto; }
-  .totals td { padding: 3px 8px; font-size: 10pt; }
-  .totals .total-row { font-weight: bold; font-size: 12pt; border-top: 2px solid {{ quotation.business.color_primary }}; }
-  .notes { margin-top: 18px; font-size: 9pt; color: #555; }
-  .payment-info { margin-top: 20px; }
-  .payment-info h4 { font-size: 9pt; text-transform: uppercase; color: #888; margin: 14px 0 4px; }
-  .payment-info h5 { font-size: 9pt; font-weight: bold; margin: 8px 0 4px; }
-  table.bank-accounts { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 9pt; }
-  table.bank-accounts th { text-align: left; padding: 4px 8px; border-bottom: 1px solid #ccc; }
-  table.bank-accounts td { padding: 4px 8px; border-bottom: 1px solid #eee; }
-  .sinpe-line { font-size: 9pt; margin-top: 8px; }
-  .footer { margin-top: 30px; padding-top: 10px; border-top: 1px solid #ddd; font-size: 8pt; color: #999; text-align: center; }
+  * { box-sizing: border-box; }
+  body { font-family: 'DejaVu Sans', sans-serif; font-size: 10pt; color: #2b2b2b; }
+
+  .topbar { height: 6px; background: {{ quotation.business.color_primary }}; border-radius: 3px; margin-bottom: 22px; }
+
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .logo { max-height: 64px; max-width: 190px; margin-bottom: 8px; }
+  .business-name { font-size: 15pt; font-weight: bold; color: #1a1a1a; margin-bottom: 3px; }
+  .business-meta div { font-size: 8.5pt; color: #666; line-height: 1.5; }
+
+  .quote-box { text-align: right; }
+  .quote-eyebrow { font-size: 8pt; text-transform: uppercase; letter-spacing: .08em; color: #999; margin-bottom: 4px; }
+  .quote-number { display: inline-block; background: {{ quotation.business.color_primary }}; color: #fff; font-size: 13pt; font-weight: bold; padding: 5px 14px; border-radius: 6px; margin-bottom: 7px; }
+  .quote-dates div { font-size: 8.5pt; color: #666; line-height: 1.5; }
+
+  .client-box { background: #f7f8fa; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; }
+  .client-box h4 { font-size: 8pt; text-transform: uppercase; letter-spacing: .06em; color: #999; margin: 0 0 5px; }
+  .client-box .client-name { font-size: 11pt; font-weight: bold; color: #1a1a1a; margin-bottom: 2px; }
+  .client-box .client-detail { font-size: 9pt; color: #555; }
+
+  table.items { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+  table.items th { background: {{ quotation.business.color_primary }}; color: #fff; text-align: left; padding: 8px 10px; font-size: 8.5pt; text-transform: uppercase; letter-spacing: .03em; }
+  table.items th.num, table.items td.num { text-align: right; }
+  table.items td { padding: 7px 10px; border-bottom: 1px solid #eee; font-size: 9.5pt; }
+  table.items tbody tr:nth-child(even) { background: #fafbfc; }
+
+  .totals-wrap { display: flex; justify-content: flex-end; margin-top: 10px; margin-bottom: 20px; }
+  .totals { width: 260px; border-collapse: collapse; }
+  .totals td { padding: 4px 10px; font-size: 9.5pt; color: #444; }
+  .totals td.num { text-align: right; }
+  .totals .total-row td { background: {{ quotation.business.color_primary }}; color: #fff; font-weight: bold; font-size: 12pt; padding: 9px 10px; }
+  .totals .total-row td:first-child { border-radius: 6px 0 0 6px; }
+  .totals .total-row td:last-child { border-radius: 0 6px 6px 0; }
+
+  .notes { margin-top: 14px; font-size: 9pt; color: #555; padding-left: 10px; border-left: 3px solid #e5e5e5; }
+  .notes strong { color: #333; }
+
+  .payment-info { margin-top: 24px; background: #f7f8fa; border-radius: 8px; padding: 14px 16px; }
+  .payment-info h3 { font-size: 9.5pt; font-weight: bold; color: {{ quotation.business.color_primary }}; margin: 0 0 10px; text-transform: uppercase; letter-spacing: .04em; }
+  .payment-info h4 { font-size: 8.5pt; text-transform: uppercase; letter-spacing: .04em; color: #888; margin: 12px 0 4px; }
+  .payment-info h4:first-of-type { margin-top: 0; }
+  table.bank-accounts { width: 100%; border-collapse: collapse; margin-bottom: 6px; font-size: 9pt; }
+  table.bank-accounts th { text-align: left; padding: 4px 8px; border-bottom: 1px solid #d8dadd; color: #666; font-weight: normal; text-transform: uppercase; font-size: 7.5pt; letter-spacing: .03em; }
+  table.bank-accounts td { padding: 4px 8px; border-bottom: 1px solid #e8e9eb; }
+  .sinpe-line { font-size: 9pt; margin-top: 8px; color: #333; }
+
+  .footer { margin-top: 28px; padding-top: 10px; border-top: 1px solid #eee; font-size: 8pt; color: #999; text-align: center; }
 </style>
 </head>
 <body>
+  <div class="topbar"></div>
+
   <div class="header">
     <div>
-      {% if quotation.business.logo %}<img class="logo" src="{{ quotation.business.logo.url }}">{% endif %}
+      {% if quotation.business.logo %}<img class="logo" src="{{ quotation.business.logo.url }}"><br>{% endif %}
       <div class="business-name">{{ quotation.business.name }}</div>
-      {% if quotation.business.legal_id %}<div>Cédula / ID fiscal: {{ quotation.business.legal_id }}</div>{% endif %}
-      {% if quotation.business.email %}<div>{{ quotation.business.email }}</div>{% endif %}
-      {% if quotation.business.phone %}<div>{{ quotation.business.phone }}</div>{% endif %}
-      {% if quotation.business.address %}<div>{{ quotation.business.address }}</div>{% endif %}
+      <div class="business-meta">
+        {% if quotation.business.legal_id %}<div>Cédula / ID fiscal: {{ quotation.business.legal_id }}</div>{% endif %}
+        {% if quotation.business.email %}<div>{{ quotation.business.email }}</div>{% endif %}
+        {% if quotation.business.phone %}<div>{{ quotation.business.phone }}</div>{% endif %}
+        {% if quotation.business.address %}<div>{{ quotation.business.address }}</div>{% endif %}
+      </div>
     </div>
-    <div class="quote-meta">
-      <div class="number">{{ quotation.quote_number }}</div>
-      <div>Fecha: {{ quotation.issue_date }}</div>
-      <div>Válida hasta: {{ quotation.valid_until }}</div>
+    <div class="quote-box">
+      <div class="quote-eyebrow">Cotización</div>
+      <div class="quote-number">{{ quotation.quote_number }}</div>
+      <div class="quote-dates">
+        <div>Fecha: {{ quotation.issue_date }}</div>
+        <div>Válida hasta: {{ quotation.valid_until }}</div>
+      </div>
     </div>
   </div>
 
-  <div class="parties">
-    <div class="box">
-      <h4>Cliente</h4>
-      <div>{{ quotation.client.name }}</div>
-      {% if quotation.client.company_name %}<div>{{ quotation.client.company_name }}</div>{% endif %}
-      {% if quotation.client.email %}<div>{{ quotation.client.email }}</div>{% endif %}
-      {% if quotation.client.phone %}<div>{{ quotation.client.phone }}</div>{% endif %}
-    </div>
+  <div class="client-box">
+    <h4>Cliente</h4>
+    <div class="client-name">{{ quotation.client.name }}</div>
+    {% if quotation.client.company_name %}<div class="client-detail">{{ quotation.client.company_name }}</div>{% endif %}
+    {% if quotation.client.email %}<div class="client-detail">{{ quotation.client.email }}</div>{% endif %}
+    {% if quotation.client.phone %}<div class="client-detail">{{ quotation.client.phone }}</div>{% endif %}
   </div>
 
   <table class="items">
     <thead>
-      <tr><th>Descripción</th><th>Cant.</th><th>Precio</th>{% if quotation.discount_total %}<th>Desc.</th>{% endif %}<th>Imp.</th><th>Total</th></tr>
+      <tr><th>Descripción</th><th class="num">Cant.</th><th class="num">Precio</th>{% if quotation.discount_total %}<th class="num">Desc.</th>{% endif %}<th class="num">Imp.</th><th class="num">Total</th></tr>
     </thead>
     <tbody>
     {% for item in quotation.items.all %}
@@ -77,18 +104,21 @@
     </tbody>
   </table>
 
-  <table class="totals">
-    <tr><td>Subtotal</td><td class="num">{{ quotation.subtotal|moneda:quotation.simbolo }}</td></tr>
-    {% if quotation.discount_total %}<tr><td>Descuento</td><td class="num">-{{ quotation.discount_total|moneda:quotation.simbolo }}</td></tr>{% endif %}
-    <tr><td>Impuesto</td><td class="num">{{ quotation.tax_total|moneda:quotation.simbolo }}</td></tr>
-    <tr class="total-row"><td>Total</td><td class="num">{{ quotation.total|moneda:quotation.simbolo }}</td></tr>
-  </table>
+  <div class="totals-wrap">
+    <table class="totals">
+      <tr><td>Subtotal</td><td class="num">{{ quotation.subtotal|moneda:quotation.simbolo }}</td></tr>
+      {% if quotation.discount_total %}<tr><td>Descuento</td><td class="num">-{{ quotation.discount_total|moneda:quotation.simbolo }}</td></tr>{% endif %}
+      <tr><td>Impuesto</td><td class="num">{{ quotation.tax_total|moneda:quotation.simbolo }}</td></tr>
+      <tr class="total-row"><td>Total</td><td class="num">{{ quotation.total|moneda:quotation.simbolo }}</td></tr>
+    </table>
+  </div>
 
   {% if quotation.notes %}<div class="notes"><strong>Notas:</strong> {{ quotation.notes }}</div>{% endif %}
   {% if quotation.terms %}<div class="notes"><strong>Términos y condiciones:</strong> {{ quotation.terms }}</div>{% endif %}
 
   {% if quotation.business.bank_accounts.all or quotation.business.sinpe_number %}
   <div class="payment-info">
+    <h3>Información de pago</h3>
     {% regroup quotation.business.bank_accounts.all by get_currency_display as currency_groups %}
     {% for group in currency_groups %}
       <h4>Cuentas Bancarias {{ group.grouper }}</h4>
