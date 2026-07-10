@@ -11,3 +11,4 @@ python-dateutil==2.9.0.post0
 weasyprint==62.3
 pydyf==0.11.0  # pydyf>=0.12 breaks weasyprint==62.3's PDF stream transform() — pin until upgrading weasyprint
 redis==5.0.8
+requests==2.34.2

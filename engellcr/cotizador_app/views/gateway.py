@@ -11,7 +11,13 @@ from ..payments import get_provider
 def pago_retorno(request, metodo):
     """Customer lands here after a gateway checkout. Per spec: NEVER activate a subscription
     just because the customer returned here — real activation only happens via a verified
-    webhook (payments/base.py:handle_webhook_event). This is a status/waiting page only."""
+    webhook (payments/base.py:handle_webhook_event). confirm_return() may collect the funds
+    (e.g. PayPal's required capture call) but must never activate anything itself."""
+    try:
+        provider = get_provider(metodo)
+        provider.confirm_return(request)
+    except ValueError:
+        pass
     return render(request, 'cotizador_app/pago_retorno.html', {'metodo': metodo})
 
 

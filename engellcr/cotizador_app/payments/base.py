@@ -29,6 +29,14 @@ class PaymentProvider:
         details are available, this returns a clearly-labeled placeholder."""
         raise NotImplementedError
 
+    def confirm_return(self, request):
+        """Optional hook run when the customer lands back on pago_retorno. Some gateways
+        (PayPal's Orders API) need an explicit capture call at this point to actually collect
+        the funds — but per the spec, this must NEVER activate the subscription itself; that
+        only ever happens via a verified webhook event in handle_webhook_event. Default is a
+        no-op for gateways (like Tilopay) that don't need this step."""
+        pass
+
     def verify_webhook(self, request):
         """Validates the webhook signature/secret and returns a WebhookResult.
         Must raise PermissionDenied on an invalid/missing signature."""
