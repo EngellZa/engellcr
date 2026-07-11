@@ -53,6 +53,7 @@ class PaypalProvider(PaymentProvider):
                 'application_context': {
                     'brand_name': 'Cotización Express',
                     'user_action': 'PAY_NOW',
+                    'landing_page': 'LOGIN',
                     'return_url': settings.PAYPAL_RETURN_URL,
                     'cancel_url': settings.PAYPAL_CANCEL_URL,
                 },
