@@ -55,4 +55,35 @@
     </div>
   </div>
 </div>
+
+{% if show_onboarding_modal %}
+<div class="modal fade" id="onboardingModal" tabindex="-1" aria-labelledby="onboardingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="onboardingModalLabel"><i class="bi bi-info-circle-fill text-primary"></i> Completá el perfil de tu negocio</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <p>Para que tus cotizaciones se vean profesionales (con tu logo y tus datos), completá esta información en tu perfil de negocio:</p>
+        <ul class="mb-0">
+          {% if not business.logo %}<li>Logo</li>{% endif %}
+          {% if not business.legal_id %}<li>Cédula jurídica / ID fiscal</li>{% endif %}
+          {% if not business.phone %}<li>Teléfono</li>{% endif %}
+          {% if not business.address %}<li>Dirección</li>{% endif %}
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Ahora no</button>
+        <a href="{% url 'cotizador_app:perfil_negocio' %}" class="btn btn-primary btn-sm">Completar perfil</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    new bootstrap.Modal(document.getElementById('onboardingModal')).show();
+  });
+</script>
+{% endif %}
 {% endblock %}

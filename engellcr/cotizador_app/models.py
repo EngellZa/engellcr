@@ -102,6 +102,14 @@ class Business(models.Model):
     next_quote_number = models.PositiveIntegerField(default=1)
     quote_number_reset_date = models.DateField(null=True, blank=True)
     is_deleted = models.BooleanField(default=False)
+    onboarding_pending = models.BooleanField(
+        default=False,
+        help_text='Si está pendiente, el Dashboard muestra un recordatorio para completar el perfil del negocio.',
+    )
+    onboarding_prompts_shown = models.PositiveSmallIntegerField(
+        default=0,
+        help_text='Cuántas veces (de un máximo de 3 inicios de sesión) ya se mostró el recordatorio.',
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -119,6 +127,10 @@ class Business(models.Model):
     @property
     def current_usage(self):
         return self.usage_records.order_by('-created_at').first()
+
+    @property
+    def is_profile_complete(self):
+        return bool(self.logo and self.legal_id and self.phone and self.address)
 
 
 class BankAccount(models.Model):

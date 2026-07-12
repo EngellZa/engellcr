@@ -12,7 +12,7 @@ def create_trial_business(user, business_name):
     role, _ = Role.objects.get_or_create(code=Role.CUSTOMER, defaults={'name': 'Cliente'})
     UserRole.objects.get_or_create(user=user, role=role)
 
-    business = Business.objects.create(owner=user, name=business_name)
+    business = Business.objects.create(owner=user, name=business_name, onboarding_pending=True)
 
     plan = SubscriptionPlan.objects.get(code=SubscriptionPlan.FREE_TRIAL)
     subscription = Subscription.objects.create(

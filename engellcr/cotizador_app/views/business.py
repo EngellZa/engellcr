@@ -53,11 +53,27 @@ def dashboard(request):
         }
         cx_set(summary_key, summary, timeout=60)  # short TTL — counts change as quotations are created
 
+    show_onboarding_modal = False
+    if business.onboarding_pending:
+        if business.is_profile_complete:
+            business.onboarding_pending = False
+            business.save(update_fields=['onboarding_pending'])
+        elif not request.session.get('onboarding_modal_counted'):
+            # One increment per login session (not per page view) — Django's login() gives each
+            # sign-in a fresh session, so this naturally counts "sign-ins", not dashboard visits.
+            request.session['onboarding_modal_counted'] = True
+            business.onboarding_prompts_shown += 1
+            if business.onboarding_prompts_shown >= 3:
+                business.onboarding_pending = False
+            business.save(update_fields=['onboarding_pending', 'onboarding_prompts_shown'])
+            show_onboarding_modal = True
+
     context = {
         'business': business,
         'subscription': business.current_subscription,
         'usage': business.current_usage,
         'ultimas_cotizaciones': quotations.select_related('client')[:8],
+        'show_onboarding_modal': show_onboarding_modal,
         **summary,
     }
     return render(request, 'cotizador_app/dashboard.html', context)
